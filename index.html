@@ -5,175 +5,714 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MU/TH/UR 6000 // Personnel Assignment Notice</title>
   <style>
+    :root {
+      --amber: #ffb347;
+      --amber-bright: #ffd08a;
+      --amber-dim: rgba(255, 179, 71, 0.16);
+      --amber-soft: rgba(255, 179, 71, 0.08);
+      --amber-line: rgba(255, 179, 71, 0.45);
+      --bg: #050300;
+      --bg-deep: #000000;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      background: #000;
-      color: #41ff75;
+      background: var(--bg-deep);
+      color: var(--amber);
       font-family: "Courier New", Courier, monospace;
+      overflow-x: hidden;
     }
 
     .screen {
-      position: relative;
       min-height: 100vh;
-      padding: 32px;
-      box-sizing: border-box;
-      background: radial-gradient(circle at center, #031a08 0%, #000 75%);
-      overflow: hidden;
+      padding: 24px;
+      background:
+        radial-gradient(circle at center, rgba(58, 27, 0, 0.85) 0%, rgba(9, 5, 0, 0.92) 45%, #000 78%),
+        #000;
+      position: relative;
     }
 
     .screen::before {
       content: "";
-      position: absolute;
+      position: fixed;
       inset: 0;
+      pointer-events: none;
       background: repeating-linear-gradient(
         to bottom,
-        rgba(65, 255, 117, 0.06) 0px,
-        rgba(65, 255, 117, 0.06) 1px,
+        rgba(255, 179, 71, 0.06) 0px,
+        rgba(255, 179, 71, 0.06) 1px,
         transparent 2px,
         transparent 4px
       );
+      opacity: 0.32;
+      mix-blend-mode: screen;
+    }
+
+    .screen::after {
+      content: "";
+      position: fixed;
+      inset: 0;
       pointer-events: none;
-      opacity: 0.35;
+      background:
+        radial-gradient(circle at center, transparent 42%, rgba(0,0,0,0.52) 78%, rgba(0,0,0,0.82) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.42));
     }
 
     .terminal {
-      position: relative;
       max-width: 980px;
       margin: 0 auto;
-      padding: 24px 28px;
-      border: 2px solid #41ff75;
+      border: 2px solid var(--amber);
+      background: linear-gradient(180deg, rgba(10, 5, 0, 0.94), rgba(2, 1, 0, 0.985));
       box-shadow:
-        0 0 8px rgba(65, 255, 117, 0.45),
-        inset 0 0 12px rgba(65, 255, 117, 0.08);
-      background: rgba(0, 10, 0, 0.72);
+        0 0 18px rgba(255, 120, 20, 0.14),
+        inset 0 0 24px rgba(255, 179, 71, 0.06),
+        inset 0 0 120px rgba(0, 0, 0, 0.38);
+      position: relative;
+      overflow: hidden;
+      animation: terminalBreath 8s ease-in-out infinite;
+      transform-origin: center center;
+    }
+
+    .terminal.glitch {
+      animation:
+        terminalBreath 8s ease-in-out infinite,
+        terminalGlitch 0.12s steps(2) 1;
+    }
+
+    @keyframes terminalBreath {
+      0%, 100% { filter: brightness(0.98) contrast(1.02); }
+      50% { filter: brightness(0.92) contrast(1.08); }
+    }
+
+    @keyframes terminalGlitch {
+      0% { transform: translate(0, 0) skewX(0deg); }
+      20% { transform: translate(-1px, 0) skewX(0.4deg); }
+      40% { transform: translate(2px, 1px) skewX(-0.6deg); }
+      60% { transform: translate(-2px, -1px) skewX(0.6deg); }
+      80% { transform: translate(1px, 0) skewX(-0.3deg); }
+      100% { transform: translate(0, 0) skewX(0deg); }
+    }
+
+    .flash-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at center, rgba(255, 213, 140, 0.22), rgba(255, 179, 71, 0.06) 35%, transparent 70%);
+      mix-blend-mode: screen;
+    }
+
+    .flash-overlay.active {
+      animation: flashPulse 0.4s ease;
+    }
+
+    .noise-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.16;
+      mix-blend-mode: screen;
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(255, 220, 160, 0.65) 0 0.7px, transparent 1px),
+        radial-gradient(circle at 82% 26%, rgba(255, 170, 60, 0.45) 0 0.8px, transparent 1.1px),
+        radial-gradient(circle at 38% 72%, rgba(255, 215, 150, 0.42) 0 0.7px, transparent 1px),
+        radial-gradient(circle at 72% 84%, rgba(255, 140, 30, 0.34) 0 0.6px, transparent 0.95px),
+        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(255, 179, 71, 0.04), rgba(0,0,0,0.18));
+      background-size: 82px 82px, 136px 136px, 108px 108px, 164px 164px, 100% 100%;
+      animation: staticShift 0.08s steps(3) infinite, horrorFlicker 2.8s steps(2) infinite;
+    }
+
+    .noise-overlay::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.34;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 179, 71, 0.12) 0px,
+          rgba(255, 179, 71, 0.12) 1px,
+          transparent 1px,
+          transparent 2px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 179, 71, 0.05) 0px,
+          rgba(255, 179, 71, 0.05) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      animation: noiseFlicker 0.09s steps(3) infinite;
+    }
+
+    .noise-overlay::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -18%;
+      height: 22%;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255, 190, 90, 0.02) 18%,
+        rgba(255, 220, 160, 0.13) 48%,
+        rgba(255, 150, 50, 0.05) 72%,
+        transparent 100%
+      );
+      opacity: 0.7;
+      filter: blur(0.5px);
+      animation: trackingRoll 7s linear infinite;
+    }
+
+    @keyframes staticShift {
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-2px, 1px); }
+      40% { transform: translate(2px, -1px); }
+      60% { transform: translate(-1px, -2px); }
+      80% { transform: translate(2px, 2px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes noiseFlicker {
+      0% { opacity: 0.24; }
+      20% { opacity: 0.44; }
+      40% { opacity: 0.28; }
+      60% { opacity: 0.5; }
+      80% { opacity: 0.32; }
+      100% { opacity: 0.26; }
+    }
+
+    @keyframes horrorFlicker {
+      0%, 92%, 100% { opacity: 0.16; }
+      93% { opacity: 0.24; }
+      94% { opacity: 0.12; }
+      95% { opacity: 0.28; }
+      96% { opacity: 0.14; }
+      97% { opacity: 0.22; }
+    }
+
+    @keyframes trackingRoll {
+      0% { transform: translateY(-120%); opacity: 0; }
+      6% { opacity: 0.8; }
+      12% { opacity: 0.35; }
+      100% { transform: translateY(620%); opacity: 0; }
+    }
+
+    @keyframes flashPulse {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     .header {
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(65, 255, 117, 0.55);
-      text-shadow: 0 0 8px rgba(65, 255, 117, 0.45);
+      padding: 20px 24px 14px;
+      border-bottom: 1px solid var(--amber-line);
+      text-shadow: 0 0 10px rgba(255, 179, 71, 0.32);
     }
 
     .header-title {
-      font-size: 28px;
-      letter-spacing: 3px;
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: 4px;
       font-weight: bold;
       margin-bottom: 6px;
     }
 
     .header-subtitle {
-      font-size: 14px;
-      letter-spacing: 1px;
+      font-size: 13px;
+      letter-spacing: 1.2px;
       opacity: 0.9;
     }
 
-    pre {
-      margin: 0;
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(255, 179, 71, 0.3);
+      background: linear-gradient(180deg, rgba(255, 179, 71, 0.05), rgba(255, 179, 71, 0.015));
+      font-size: 12px;
+      letter-spacing: 0.8px;
+    }
+
+    .status-pill {
+      padding: 6px 9px;
+      border: 1px solid rgba(255, 179, 71, 0.3);
+      background: rgba(255, 179, 71, 0.05);
+      white-space: nowrap;
+      box-shadow: inset 0 0 8px rgba(255, 179, 71, 0.03);
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    #terminal-output {
       white-space: pre-wrap;
-      line-height: 1.55;
-      font-size: 16px;
-      text-shadow: 0 0 6px rgba(65, 255, 117, 0.35);
+      line-height: 1.52;
+      font-size: 15px;
+      min-height: 420px;
+      text-shadow: 0 0 8px rgba(255, 179, 71, 0.26);
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    #terminal-output::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #terminal-output::-webkit-scrollbar-track {
+      background: rgba(255, 179, 71, 0.03);
+    }
+
+    #terminal-output::-webkit-scrollbar-thumb {
+      background: rgba(255, 179, 71, 0.25);
+      border: 1px solid rgba(255, 179, 71, 0.35);
+    }
+
+    .line {
+      opacity: 0;
+      transform: translateY(2px);
+      animation: lineIn 0.14s ease forwards;
+    }
+
+    .boot-line {
+      color: var(--amber-bright);
+    }
+
+    .system-line {
+      color: #ffc878;
+    }
+
+    @keyframes lineIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .cursor {
       display: inline-block;
       width: 10px;
+      height: 1em;
       margin-left: 4px;
-      background: #41ff75;
-      box-shadow: 0 0 8px rgba(65, 255, 117, 0.8);
+      background: var(--amber);
+      box-shadow: 0 0 10px rgba(255, 179, 71, 0.8);
       animation: blink 1s steps(1) infinite;
-      vertical-align: middle;
+      vertical-align: text-bottom;
     }
 
     @keyframes blink {
       50% { opacity: 0; }
     }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    button {
+      background: #100900;
+      color: var(--amber);
+      border: 1px solid var(--amber);
+      padding: 9px 14px;
+      font-family: inherit;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: rgba(255, 179, 71, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .boot-button-wrap {
+      margin: 18px 0 0;
+      padding: 14px;
+      border: 1px solid rgba(255, 179, 71, 0.35);
+      background: rgba(255, 179, 71, 0.04);
+      display: inline-flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .note {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 11px;
+      opacity: 0.65;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 640px) {
+      .screen { padding: 14px; }
+      .content, .header, .status-bar { padding-left: 16px; padding-right: 16px; }
+      #terminal-output { font-size: 14px; min-height: 360px; max-height: 60vh; }
+      .controls { gap: 8px; }
+      button { width: 100%; }
+      .status-pill { width: 100%; }
+    }
   </style>
 </head>
 <body>
   <div class="screen">
-    <div class="terminal">
+    <div class="terminal" id="terminal-shell">
+      <div class="flash-overlay" id="flash-overlay"></div>
+      <div class="noise-overlay" aria-hidden="true"></div>
+
       <div class="header">
         <div class="header-title">MU/TH/UR 6000</div>
         <div class="header-subtitle">COMMERCIAL TRANSPORT MAINFRAME // WEYLAND-YUTANI NETWORK ACCESS</div>
       </div>
 
-<pre>
-&gt; LOAD HR_ASSIGNMENT_NOTICE
-&gt; ACCESS GRANTED
-&gt; DISPLAYING FILE...
+      <div class="status-bar">
+        <div class="status-pill">NODE: USCSS CASSIAN</div>
+        <div class="status-pill">LINK: STABLE</div>
+        <div class="status-pill">DOCK STATUS: HARD-SEAL</div>
+        <div class="status-pill">CONTRACT ROUTE: WY-442-C</div>
+      </div>
 
-WEYLAND-YUTANI CORPORATION
-HUMAN RESOURCES DIVISION
-COMMERCIAL TRANSIT AND AUXILIARY STAFFING
-------------------------------------------------------------
+      <div class="content">
+        <div id="terminal-output"></div>
 
-TO: ASSIGNED PERSONNEL
-RE: ACTIVE DUTY ASSIGNMENT
-STATUS: CONFIRMED
-VESSEL: USCSS CASSIAN
-AUTHORITY: WEYLAND-YUTANI CONTRACT OVERSIGHT
+        <div id="boot-wrap" class="boot-button-wrap">
+          <button id="init-button">INITIALIZE TERMINAL</button>
+          <div class="note">Audio on mobile and most browsers requires one tap or click before tones can play.</div>
+        </div>
 
-WELCOME ABOARD.
+        <div class="controls" id="controls" style="display:none;">
+          <button id="restart-btn">RESTART SEQUENCE</button>
+          <button id="skip-btn">SKIP TO FULL TEXT</button>
+          <button id="sound-btn">SOUND: ON</button>
+        </div>
 
-YOU HAVE BEEN ASSIGNED TO ACTIVE DUTY ABOARD THE USCSS CASSIAN,
-A COMMERCIAL TOWING VESSEL OPERATING UNDER WEYLAND-YUTANI
-CONTRACT AUTHORITY. YOUR BERTH, WORK DESIGNATION, AND EMERGENCY
-OPERATIONAL PRIVILEGES HAVE BEEN ENTERED INTO THE VESSEL PERSONNEL
-REGISTRY FOR THE DURATION OF THIS ASSIGNMENT.
-
-SCHEDULED ASSIGNMENT DATE: [NIGHT OF SCHEDULED DEPLOYMENT]
-WAKE CYCLE TIME: TO BE DETERMINED
-ESTIMATED OPERATIONAL WINDOW: APPROXIMATELY 4 TO 5 HOURS
-OF IN-GAME SHIPBOARD TIME
-
-THE CASSIAN IS CURRENTLY ENGAGED IN LONG-RANGE COMMERCIAL
-TRANSIT OPERATIONS AND ASSOCIATED RECOVERY SUPPORT. AS PART OF
-YOUR ASSIGNMENT, YOU MAY BE CALLED UPON TO ASSIST WITH VESSEL
-SUPPORT, EMERGENCY BOARDING ACTIONS, SURVEY RESPONSE, CARGO
-OVERSIGHT, MEDICAL TRIAGE, OR OTHER DUTIES AS DEEMED NECESSARY
-BY SHIP COMMAND AND CORPORATE DIRECTIVE.
-
-PLEASE BE ADVISED OF THE FOLLOWING:
-
-[1] REVIVAL FROM CRYOSTASIS MAY OCCUR AHEAD OF SCHEDULE IN THE
-EVENT OF ROUTE DEVIATION, DISTRESS INTERCEPTION, CORPORATE
-PRIORITY REASSIGNMENT, OR EMERGENT OPERATIONAL NEED.
-
-[2] ALL ATTACHED PERSONNEL ARE EXPECTED TO COMPLY WITH STANDING
-QUARANTINE, CONTAMINATION, AND CHAIN-OF-COMMAND PROCEDURES
-WHILE ABOARD SHIP.
-
-[3] ANY RECOVERED MATERIALS, BIOLOGICAL FINDINGS, DATA LOGS,
-OR PROPRIETARY ASSETS ENCOUNTERED DURING TRANSIT OPERATIONS
-REMAIN THE SOLE PROPERTY OF WEYLAND-YUTANI CORPORATION UNLESS
-OTHERWISE NOTED BY SEALED DIRECTIVE.
-
-QUESTIONS REGARDING YOUR ASSIGNMENT SHOULD BE DIRECTED TO
-SHIP COMMAND, YOUR SUPERVISING OFFICER, OR THE DESIGNATED
-CORPORATE LIAISON ABOARD THE CASSIAN.
-
-WE RECOGNIZE THAT LONG-HAUL ASSIGNMENTS PLACE UNIQUE DEMANDS
-ON PERSONNEL. WEYLAND-YUTANI REMAINS COMMITTED TO PROVIDING
-MEANINGFUL OPPORTUNITIES FOR ADVANCEMENT, CONTINUED SERVICE,
-AND INTERDEPARTMENTAL GROWTH ACROSS THE COMMERCIAL FRONTIER.
-
-THANK YOU FOR YOUR COOPERATION.
-
-BUILDING BETTER WORLDS
-WEYLAND-YUTANI CORPORATION
-HUMAN RESOURCES DIVISION
-COMMERCIAL TRANSIT AND AUXILIARY STAFFING
-
-ATTACHMENTS:
-- PERSONNEL ASSIGNMENT PACKET
-- CRYOSTASIS REVIVAL AND CONDUCT GUIDELINES
-- QUARANTINE AND CONTAMINATION RESPONSE SUMMARY
-
-&gt; END OF FILE<span class="cursor">&nbsp;</span>
-</pre>
+        <div class="footer-note">WEYLAND-YUTANI INTERNAL SYSTEM // BUILDING BETTER WORLDS</div>
+      </div>
     </div>
   </div>
+
+  <script>
+    const SOUND_KEY = 'muthur-sound-enabled';
+
+    const bootLines = [
+      '> POWERING MU/TH/UR 6000...',
+      '> BOOT SEQUENCE INITIATED...',
+      '> LINKING COMMERCIAL TRANSPORT MAINFRAME...',
+      '> ROUTING WEYLAND-YUTANI NETWORK ACCESS...',
+      '> VERIFYING SHIPBOARD USER PRIVILEGES...',
+      '> AUDIO CHANNEL READY...',
+      '> FILE DIRECTORY INDEXED...',
+      '> HR_ASSIGNMENT_NOTICE LOCATED...',
+      '> ACCESS GRANTED.',
+      '> DISPLAYING FILE...'
+    ];
+
+    const memoLines = [
+      '',
+      'FILE: HR_ASSIGNMENT_NOTICE // PRIORITY: ROUTINE // ARCHIVE CLASS: INTERNAL',
+      'CROSS-REFERENCE: ATTACHED PERSONNEL VERIFIED',
+      'SPECIAL HANDLING FLAGS PRESENT',
+      '',
+      'WEYLAND-YUTANI CORPORATION',
+      'HUMAN RESOURCES DIVISION',
+      'COMMERCIAL TRANSIT AND AUXILIARY STAFFING',
+      '------------------------------------------------------------',
+      '',
+      'TO: ASSIGNED PERSONNEL',
+      'RE: ACTIVE DUTY ASSIGNMENT',
+      'STATUS: CONFIRMED',
+      'VESSEL: USCSS CASSIAN',
+      'AUTHORITY: WEYLAND-YUTANI CONTRACT OVERSIGHT',
+      '',
+      'WELCOME ABOARD.',
+      '',
+      'YOU HAVE BEEN ASSIGNED TO ACTIVE DUTY ABOARD THE USCSS CASSIAN,',
+      'A COMMERCIAL TOWING VESSEL OPERATING UNDER WEYLAND-YUTANI',
+      'CONTRACT AUTHORITY. YOUR BERTH, WORK DESIGNATION, AND EMERGENCY',
+      'OPERATIONAL PRIVILEGES HAVE BEEN ENTERED INTO THE VESSEL PERSONNEL',
+      'REGISTRY FOR THE DURATION OF THIS ASSIGNMENT.',
+      '',
+      'SCHEDULED ASSIGNMENT DATE: [NIGHT OF SCHEDULED DEPLOYMENT]',
+      'WAKE CYCLE TIME: TO BE DETERMINED',
+      'ESTIMATED OPERATIONAL WINDOW: APPROXIMATELY 4 TO 5 HOURS',
+      'OF IN-GAME SHIPBOARD TIME',
+      '',
+      'THE CASSIAN IS CURRENTLY ENGAGED IN LONG-RANGE COMMERCIAL',
+      'TRANSIT OPERATIONS AND ASSOCIATED RECOVERY SUPPORT. AS PART OF',
+      'YOUR ASSIGNMENT, YOU MAY BE CALLED UPON TO ASSIST WITH VESSEL',
+      'SUPPORT, EMERGENCY BOARDING ACTIONS, SURVEY RESPONSE, CARGO',
+      'OVERSIGHT, MEDICAL TRIAGE, OR OTHER DUTIES AS DEEMED NECESSARY',
+      'BY SHIP COMMAND AND CORPORATE DIRECTIVE.',
+      '',
+      'PLEASE BE ADVISED OF THE FOLLOWING:',
+      '',
+      '[1] REVIVAL FROM CRYOSTASIS MAY OCCUR AHEAD OF SCHEDULE IN THE',
+      'EVENT OF ROUTE DEVIATION, DISTRESS INTERCEPTION, CORPORATE',
+      'PRIORITY REASSIGNMENT, OR EMERGENT OPERATIONAL NEED.',
+      '',
+      '[2] ALL ATTACHED PERSONNEL ARE EXPECTED TO COMPLY WITH STANDING',
+      'QUARANTINE, CONTAMINATION, AND CHAIN-OF-COMMAND PROCEDURES',
+      'WHILE ABOARD SHIP.',
+      '',
+      '[3] ANY RECOVERED MATERIALS, BIOLOGICAL FINDINGS, DATA LOGS,',
+      'OR PROPRIETARY ASSETS ENCOUNTERED DURING TRANSIT OPERATIONS',
+      'REMAIN THE SOLE PROPERTY OF WEYLAND-YUTANI CORPORATION UNLESS',
+      'OTHERWISE NOTED BY SEALED DIRECTIVE.',
+      '',
+      'QUESTIONS REGARDING YOUR ASSIGNMENT SHOULD BE DIRECTED TO',
+      'SHIP COMMAND, YOUR SUPERVISING OFFICER, OR THE DESIGNATED',
+      'CORPORATE LIAISON ABOARD THE CASSIAN.',
+      '',
+      'WE RECOGNIZE THAT LONG-HAUL ASSIGNMENTS PLACE UNIQUE DEMANDS',
+      'ON PERSONNEL. WEYLAND-YUTANI REMAINS COMMITTED TO PROVIDING',
+      'MEANINGFUL OPPORTUNITIES FOR ADVANCEMENT, CONTINUED SERVICE,',
+      'AND INTERDEPARTMENTAL GROWTH ACROSS THE COMMERCIAL FRONTIER.',
+      '',
+      'THANK YOU FOR YOUR COOPERATION.',
+      '',
+      'BUILDING BETTER WORLDS',
+      'WEYLAND-YUTANI CORPORATION',
+      'HUMAN RESOURCES DIVISION',
+      'COMMERCIAL TRANSIT AND AUXILIARY STAFFING',
+      '',
+      'ATTACHMENTS:',
+      '- PERSONNEL ASSIGNMENT PACKET',
+      '- CRYOSTASIS REVIVAL AND CONDUCT GUIDELINES',
+      '- QUARANTINE AND CONTAMINATION RESPONSE SUMMARY',
+      '',
+      '> END OF FILE',
+      '> FILE READY FOR REVIEW'
+    ];
+
+    const output = document.getElementById('terminal-output');
+    const initButton = document.getElementById('init-button');
+    const controls = document.getElementById('controls');
+    const bootWrap = document.getElementById('boot-wrap');
+    const restartBtn = document.getElementById('restart-btn');
+    const skipBtn = document.getElementById('skip-btn');
+    const soundBtn = document.getElementById('sound-btn');
+    const flashOverlay = document.getElementById('flash-overlay');
+    const terminalShell = document.getElementById('terminal-shell');
+
+    let audioCtx = null;
+    let soundEnabled = localStorage.getItem(SOUND_KEY) !== 'false';
+    let isRunning = false;
+    let skipRequested = false;
+    let currentTimer = null;
+
+    soundBtn.textContent = `SOUND: ${soundEnabled ? 'ON' : 'OFF'}`;
+
+    function sleep(ms) {
+      return new Promise(resolve => {
+        currentTimer = setTimeout(resolve, ms);
+      });
+    }
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function beep(frequency = 880, duration = 0.05, type = 'square', volume = 0.018) {
+      if (!soundEnabled || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration + 0.02);
+    }
+
+    function burstBeep() {
+      beep(1180, 0.03, 'square', 0.012);
+      setTimeout(() => beep(960, 0.03, 'square', 0.01), 35);
+      setTimeout(() => beep(1320, 0.04, 'square', 0.008), 70);
+    }
+
+    function authTone() {
+      beep(620, 0.05, 'square', 0.012);
+      setTimeout(() => beep(930, 0.06, 'square', 0.013), 65);
+      setTimeout(() => beep(1240, 0.08, 'square', 0.01), 140);
+    }
+
+    function triggerFlash() {
+      flashOverlay.classList.remove('active');
+      void flashOverlay.offsetWidth;
+      flashOverlay.classList.add('active');
+    }
+
+    function triggerGlitch(duration = 120) {
+      terminalShell.classList.remove('glitch');
+      void terminalShell.offsetWidth;
+      terminalShell.classList.add('glitch');
+      setTimeout(() => terminalShell.classList.remove('glitch'), duration);
+    }
+
+    function addLine(text, lineType = '') {
+      const line = document.createElement('div');
+      line.className = `line ${lineType}`.trim();
+      line.textContent = text || ' ';
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function updateCursor() {
+      let cursor = document.querySelector('.cursor');
+      if (!cursor) {
+        cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        output.appendChild(cursor);
+      } else {
+        output.appendChild(cursor);
+      }
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+      updateCursor();
+    }
+
+    function startAmbientGlitches() {
+      setInterval(() => {
+        if (Math.random() < 0.28) {
+          triggerGlitch(90 + Math.floor(Math.random() * 120));
+        }
+      }, 2600);
+    }
+
+    function lineClassForText(text, boot = false) {
+      if (boot) return 'boot-line';
+      if (text.startsWith('FILE:') || text.startsWith('CROSS-REFERENCE:') || text.startsWith('SPECIAL HANDLING')) {
+        return 'system-line';
+      }
+      return '';
+    }
+
+    async function printLines(lines, baseDelay = 200, boot = false) {
+      for (let i = 0; i < lines.length; i++) {
+        if (skipRequested) return;
+
+        const text = lines[i];
+        const isAuthMoment = text === '> ACCESS GRANTED.' || text === '> DISPLAYING FILE...';
+
+        if (boot) {
+          if (isAuthMoment) {
+            authTone();
+            triggerFlash();
+            triggerGlitch(180);
+          } else {
+            burstBeep();
+          }
+        } else {
+          if (text.startsWith('>')) {
+            beep(880, 0.04, 'square', 0.012);
+          } else if (text.startsWith('FILE:') || text.startsWith('CROSS-REFERENCE:') || text.startsWith('SPECIAL HANDLING')) {
+            beep(980, 0.045, 'square', 0.01);
+          } else {
+            beep(720, 0.04, 'square', 0.012);
+          }
+        }
+
+        addLine(text, lineClassForText(text, boot));
+        updateCursor();
+
+        let delay;
+        if (boot) {
+          if (i < 3) delay = 520;
+          else if (isAuthMoment) delay = 420;
+          else delay = 240;
+        } else {
+          delay = text === '' ? 90 : text.startsWith('>') ? 180 : baseDelay;
+        }
+
+        await sleep(delay);
+      }
+    }
+
+    function renderAllImmediately() {
+      output.innerHTML = '';
+      bootLines.forEach(line => addLine(line, lineClassForText(line, true)));
+      memoLines.forEach(line => addLine(line, lineClassForText(line, false)));
+      updateCursor();
+    }
+
+    async function runSequence() {
+      if (isRunning) return;
+      isRunning = true;
+      skipRequested = false;
+      clearOutput();
+      await printLines(bootLines, 200, true);
+      if (!skipRequested) {
+        await sleep(240);
+        await printLines(memoLines, 115, false);
+      }
+      updateCursor();
+      isRunning = false;
+    }
+
+    function restartSequence() {
+      clearTimeout(currentTimer);
+      skipRequested = false;
+      isRunning = false;
+      runSequence();
+    }
+
+    function skipSequence() {
+      clearTimeout(currentTimer);
+      skipRequested = true;
+      isRunning = false;
+      renderAllImmediately();
+    }
+
+    initButton.addEventListener('click', async () => {
+      ensureAudio();
+      beep(640, 0.06, 'square', 0.015);
+      bootWrap.style.display = 'none';
+      controls.style.display = 'flex';
+      runSequence();
+    });
+
+    restartBtn.addEventListener('click', () => {
+      ensureAudio();
+      restartSequence();
+    });
+
+    skipBtn.addEventListener('click', () => {
+      ensureAudio();
+      skipSequence();
+    });
+
+    soundBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      localStorage.setItem(SOUND_KEY, String(soundEnabled));
+      soundBtn.textContent = `SOUND: ${soundEnabled ? 'ON' : 'OFF'}`;
+      ensureAudio();
+      if (soundEnabled) beep(950, 0.05, 'square', 0.012);
+    });
+
+    clearOutput();
+    startAmbientGlitches();
+  </script>
 </body>
 </html>
