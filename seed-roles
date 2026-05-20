@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seed Cassian Roles</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #111;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    button {
+      padding: 10px 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    pre {
+      background: #1b1b1b;
+      padding: 16px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Seed USCSS Cassian Roles</h1>
+    <p>This will create the remaining 7 role documents. Captain is skipped.</p>
+    <button id="seedBtn">Seed Roles</button>
+    <pre id="log">Ready.</pre>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "PASTE_YOURS",
+      authDomain: "PASTE_YOURS",
+      projectId: "PASTE_YOURS",
+      storageBucket: "PASTE_YOURS",
+      messagingSenderId: "PASTE_YOURS",
+      appId: "PASTE_YOURS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const roles = [
+      {
+        id: "pilot",
+        title: "Pilot / Navigator",
+        description: "Flight control, approach vectors, and shuttle handling aboard the USCSS Cassian.",
+        order: 2
+      },
+      {
+        id: "chief-engineer",
+        title: "Chief Engineer / Roughneck",
+        description: "Responsible for engines, power systems, and keeping the Cassian alive.",
+        order: 3
+      },
+      {
+        id: "cargo-handler",
+        title: "Cargo Handler / Deckhand",
+        description: "Handles loading, deck operations, and rough labor across cargo spaces and locks.",
+        order: 4
+      },
+      {
+        id: "company-liaison",
+        title: "Company Liaison / Corporate Oversight",
+        description: "Ensures contract compliance, oversight, and corporate reporting aboard the Cassian.",
+        order: 5
+      },
+      {
+        id: "medic",
+        title: "Medic",
+        description: "Medical support, emergency care, triage, and quarantine response.",
+        order: 6
+      },
+      {
+        id: "science-specialist",
+        title: "Science / Survey Specialist",
+        description: "Handles analysis, survey interpretation, and scientific response to anomalous findings.",
+        order: 7
+      },
+      {
+        id: "operations-officer",
+        title: "Operations Officer / Warrant Officer",
+        description: "Coordinates procedures, ship operations, and emergency response under command authority.",
+        order: 8
+      }
+    ];
+
+    const log = document.getElementById("log");
+    const seedBtn = document.getElementById("seedBtn");
+
+    function writeLog(message) {
+      log.textContent += `\n${message}`;
+    }
+
+    seedBtn.addEventListener("click", async () => {
+      seedBtn.disabled = true;
+      log.textContent = "Signing in anonymously...";
+
+      try {
+        await signInAnonymously(auth);
+        writeLog("Signed in.");
+        writeLog("Writing role documents...");
+
+        for (const role of roles) {
+          const ref = doc(db, "games", "cassian", "roles", role.id);
+          await setDoc(ref, {
+            title: role.title,
+            description: role.description,
+            order: role.order,
+            claimedBy: "",
+            claimedByUid: "",
+            claimedAt: null,
+            seededAt: serverTimestamp()
+          }, { merge: true });
+
+          writeLog(`Seeded: ${role.id}`);
+        }
+
+        writeLog("Done. You can now switch your Firestore rules back.");
+      } catch (err) {
+        console.error(err);
+        writeLog(`ERROR: ${err.message}`);
+      } finally {
+        seedBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
