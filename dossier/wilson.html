@@ -70,17 +70,36 @@
       box-shadow:
         0 0 18px rgba(127, 182, 190, 0.14),
         inset 0 0 20px rgba(127, 182, 190, 0.08);
-      clip-path: polygon(
-        4% 0%,
-        88% 0%,
-        100% 8%,
-        100% 92%,
-        92% 100%,
-        34% 100%,
-        26% 94%,
-        0% 94%,
-        0% 6%
-      );
+      overflow: hidden;
+    }
+
+    .dossier-frame::before,
+    .dossier-frame::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+      background: transparent;
+    }
+
+    .dossier-frame::before {
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+      border-top: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+      opacity: 0.85;
+    }
+
+    .dossier-frame::after {
+      bottom: 10px;
+      left: 10px;
+      width: 34px;
+      height: 34px;
+      border-bottom: 2px solid var(--line);
+      border-left: 2px solid var(--line);
+      opacity: 0.85;
     }
 
     .dossier-title {
@@ -90,6 +109,8 @@
       margin-bottom: 12px;
       color: var(--text);
       text-shadow: 0 0 10px var(--glow);
+      position: relative;
+      z-index: 1;
     }
 
     .portrait-frame {
@@ -174,6 +195,12 @@
       .dossier-role {
         font-size: 0.88rem;
       }
+
+      .dossier-frame::before,
+      .dossier-frame::after {
+        width: 26px;
+        height: 26px;
+      }
     }
   </style>
 </head>
@@ -184,7 +211,7 @@
 
       <div class="portrait-frame">
         <img
-          src="../images/wilson-profile.png"
+          src="images/wilson-profile.png"
           alt="John J. Wilson portrait"
           class="dossier-portrait"
         />
@@ -198,10 +225,10 @@
 
       <div class="dossier-blurb">
         You've been embedded with the Cassian crew for approximately six months,
-        evaluating their performance to determine whether the crew should be retained,
-        restructured, or elevated under future company contracts. You’ve adapted well
-        enough to survive among them, but you did not come here to remain one of them.
-        A special opportunity may finally be opening, and you intend to turn it into advancement.
+        evaluating their performance and contract viability under company oversight.
+        Though not originally one of them, you have adjusted to the rhythms of shipboard
+        life and built a place for yourself within the crew. Your assignment remains a
+        stepping stone, and you intend to make the most of whatever opportunities emerge.
       </div>
 
       <div class="dossier-stat"><span class="label">STRENGTH</span> 2, <span class="label">AGILITY</span> 4, <span class="label">WITS</span> 3, <span class="label">EMPATHY</span> 5</div>
