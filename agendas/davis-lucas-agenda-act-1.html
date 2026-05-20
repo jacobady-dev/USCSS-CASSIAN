@@ -56,8 +56,10 @@
         ),
         linear-gradient(180deg, rgba(7,18,24,0.96), rgba(3,8,12,0.98));
       padding: 18px 22px;
-      box-shadow: 0 0 18px rgba(127,182,190,0.14), inset 0 0 20px rgba(127,182,190,0.07);
-      clip-path: polygon(2% 0, 38% 0, 41% 8%, 98% 8%, 100% 16%, 100% 84%, 98% 100%, 2% 100%, 0 88%, 0 12%);
+      box-shadow:
+        0 0 18px rgba(127,182,190,0.14),
+        inset 0 0 20px rgba(127,182,190,0.07);
+      clip-path: none;
     }
 
     .title {
@@ -79,26 +81,11 @@
       white-space: pre-wrap;
     }
 
-     {
-  width: min(760px, 100%);
-  position: relative;
-  border: 2px solid var(--line);
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(180, 255, 255, 0.07) 0px,
-      rgba(180, 255, 255, 0.07) 1px,
-      transparent 2px,
-      transparent 4px
-    ),
-    linear-gradient(180deg, rgba(7,18,24,0.96), rgba(3,8,12,0.98));
-  padding: 18px 22px;
-  box-shadow:
-    0 0 18px rgba(127,182,190,0.14),
-    inset 0 0 20px rgba(127,182,190,0.07);
-  border-radius: 0;
-  clip-path: none;
-}
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .memo {
+        padding: 14px 16px;
+        clip-path: none;
       }
       .title { font-size: 1.35rem; }
       .content { font-size: 0.96rem; }
@@ -109,7 +96,9 @@
   <section class="memo">
     <div class="title">DAVIS / LUCAS AGENDA, ACT I</div>
     <div class="rule"></div>
-    <div class="content">God, these cargo runs are fucking boring, and taking any chance to break the monotony sounds better than another dead stretch of transit. <br /> At the same time, you are not only Davis. You are not who you seem to be. You are, in fact, a synthetic undercover agent codenamed Lucas, working for Bionational—a corporate rival to Weyland Yutani. None of the rest of the crew know this. You have been informed that the Cassian will be redirected en route to investigate the USCSS Cronus, a Weyland-Yutani science ship missing for 73 years. Make sure to follow along with this investigation, to learn whatever you can about what’s onboard the derelict ship. And whatever you do—don’t expose yourself as an android</div>
+    <div class="content">God, these cargo runs are fucking boring, and taking any chance to break the monotony sounds better than another dead stretch of transit.
+
+At the same time, you are not only Davis. You are not who you seem to be. You are, in fact, a synthetic undercover agent codenamed Lucas, working for Bionational-a corporate rival to Weyland Yutani. None of the rest of the crew know this. You have been informed that the Cassian will be redirected en route to investigate the USCSS Cronus, a Weyland-Yutani science ship missing for 73 years. Make sure to follow along with this investigation, to learn whatever you can about what's onboard the derelict ship. And whatever you do-don't expose yourself as an android</div>
   </section>
 </body>
 </html>
