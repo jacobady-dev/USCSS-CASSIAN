@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WY Internal // Wilson Directive</title>
+  <style>
+    :root {
+      --amber: #ffb347;
+      --amber-bright: #ffd891;
+      --amber-text: #ffe7bf;
+      --amber-border: rgba(255, 179, 71, 0.28);
+      --bg: #000000;
+      --panel: rgba(255, 179, 71, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(50, 24, 0, 0.68) 0%, rgba(8, 4, 0, 0.92) 48%, #000 78%),
+        #000;
+      color: var(--amber);
+      font-family: "Courier New", Courier, monospace;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 179, 71, 0.035) 0px,
+        rgba(255, 179, 71, 0.035) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      opacity: 0.18;
+    }
+
+    .screen {
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .terminal {
+      width: 100%;
+      max-width: 980px;
+      border: 2px solid var(--amber);
+      background: linear-gradient(180deg, rgba(10, 5, 0, 0.97), rgba(2, 1, 0, 0.99));
+      box-shadow:
+        0 0 14px rgba(255, 120, 20, 0.08),
+        inset 0 0 80px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .noise-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.10;
+      background-image:
+        radial-gradient(circle at 14% 22%, rgba(255, 238, 194, 0.9) 0 1.1px, transparent 1.4px),
+        radial-gradient(circle at 80% 32%, rgba(255, 197, 101, 0.78) 0 1.1px, transparent 1.45px),
+        radial-gradient(circle at 40% 74%, rgba(255, 228, 177, 0.6) 0 1px, transparent 1.25px),
+        radial-gradient(circle at 72% 84%, rgba(255, 164, 58, 0.5) 0 0.95px, transparent 1.15px);
+      background-size: 72px 72px, 116px 116px, 92px 92px, 146px 146px;
+      animation: noiseShift 0.12s steps(2) infinite;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes noiseShift {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(1px, -1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--amber-border);
+    }
+
+    .header-title {
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: 4px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: var(--amber-bright);
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      letter-spacing: 1px;
+      opacity: 0.9;
+      color: var(--amber-text);
+    }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--amber-border);
+      background: rgba(255, 179, 71, 0.02);
+      font-size: 12px;
+    }
+
+    .status-pill {
+      padding: 6px 9px;
+      border: 1px solid var(--amber-border);
+      background: rgba(255, 179, 71, 0.03);
+      white-space: nowrap;
+      color: var(--amber-text);
+    }
+
+    .content {
+      padding: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #terminal-output {
+      height: 420px;
+      overflow-y: auto;
+      padding: 14px;
+      border: 1px solid var(--amber-border);
+      background: rgba(0, 0, 0, 0.34);
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.45);
+      color: var(--amber-text);
+      font-size: 15px;
+      line-height: 1.58;
+      white-space: pre-wrap;
+      text-shadow: 0 0 4px rgba(255, 179, 71, 0.16);
+    }
+
+    #terminal-output::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #terminal-output::-webkit-scrollbar-track {
+      background: rgba(255, 179, 71, 0.03);
+    }
+
+    #terminal-output::-webkit-scrollbar-thumb {
+      background: rgba(255, 179, 71, 0.22);
+      border: 1px solid rgba(255, 179, 71, 0.3);
+    }
+
+    .line {
+      opacity: 0;
+      transform: translateY(2px);
+      animation: lineIn 0.12s ease forwards;
+    }
+
+    .boot-line {
+      color: #fff1cf;
+    }
+
+    .system-line {
+      color: #ffe1a8;
+    }
+
+    @keyframes lineIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      margin-left: 4px;
+      background: var(--amber);
+      box-shadow: 0 0 8px rgba(255, 179, 71, 0.55);
+      animation: blink 1s steps(1) infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .boot-wrap {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--amber-border);
+      background: rgba(255, 179, 71, 0.04);
+      display: inline-flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .controls {
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      background: #100900;
+      color: var(--amber);
+      border: 1px solid var(--amber);
+      padding: 10px 14px;
+      font-family: inherit;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: rgba(255, 179, 71, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .note {
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.78;
+      color: var(--amber-text);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      opacity: 0.62;
+      color: var(--amber-text);
+    }
+
+    @media (max-width: 640px) {
+      .screen {
+        padding: 10px;
+      }
+
+      .header,
+      .status-bar,
+      .content {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .header-title {
+        font-size: 22px;
+        letter-spacing: 2px;
+      }
+
+      .header-subtitle {
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .status-bar {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .status-pill,
+      .boot-wrap,
+      button {
+        width: 100%;
+      }
+
+      #terminal-output {
+        height: 300px;
+        font-size: 14px;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .noise-overlay,
+      .line,
+      .cursor {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <div class="terminal">
+      <div class="noise-overlay" aria-hidden="true"></div>
+
+      <div class="header">
+        <div class="header-title">MU/TH/UR 6000</div>
+        <div class="header-subtitle">WEYLAND-YUTANI SECURE CORPORATE CHANNEL</div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-pill">RECIPIENT: J. J. WILSON</div>
+        <div class="status-pill">ACCESS: EYES ONLY</div>
+        <div class="status-pill">TRANSMISSION: SEALED</div>
+        <div class="status-pill">DISSEMINATION: DENIED</div>
+      </div>
+
+      <div class="content">
+        <div id="terminal-output"></div>
+
+        <div id="boot-wrap" class="boot-wrap">
+          <button id="init-button" type="button">INITIALIZE TERMINAL</button>
+          <div class="note">Secure corporate file. Use SKIP TO FULL TEXT if needed.</div>
+        </div>
+
+        <div id="controls" class="controls">
+          <button id="restart-btn" type="button">RESTART SEQUENCE</button>
+          <button id="skip-btn" type="button">SKIP TO FULL TEXT</button>
+          <button id="sound-btn" type="button">SOUND: ON</button>
+        </div>
+
+        <div class="footer-note">WEYLAND-YUTANI INTERNAL // BUILDING BETTER WORLDS</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const NEWLINE = "\n";
+
+    const bootLines = [
+      "> ESTABLISHING SECURE CORPORATE CHANNEL...",
+      "> VERIFYING RECIPIENT CREDENTIALS...",
+      "> ACCESSING SEALED DIRECTIVE...",
+      "> DECRYPTION COMPLETE.",
+      "> DISPLAYING FILE..."
+    ];
+
+    const memoLines = [
+      "",
+      "SEALED DIRECTIVE",
+      "WEYLAND-YUTANI INTERNAL",
+      "EYES ONLY",
+      "RECIPIENT: J. J. WILSON",
+      "LOCAL CREW ACCESS: DENIED",
+      "",
+      "Wilson,",
+      "",
+      "You are assigned to the USCSS Cassian under standing corporate oversight authority.",
+      "",
+      "Your present function is evaluative.",
+      "",
+      "For the duration of your placement, you are to observe crew performance, monitor chain-of-command reliability, assess interpersonal stability, and report upon the long-term contract viability of vessel personnel currently operating under Weyland-Yutani authority. Special attention is to be given to procedural compliance, adaptability under stress, maintenance of operational discipline, and any indicators that individual crew members may represent future value, liability, or replacement necessity.",
+      "",
+      "You may assist with routine ship functions where applicable and where doing so preserves operational continuity, crew access, or observational discretion. Such assistance is incidental to your assignment. You are not aboard as ship command, and you are not aboard as ordinary crew. You are there as a company observer.",
+      "",
+      "This responsibility is to be carried out without unnecessary disruption to ship routine. Your value aboard the Cassian depends upon continued access, ordinary presence, and the appearance of administrative purpose. Maintain professional distance. Avoid preventable visibility.",
+      "",
+      "You are to remain attentive to any change in assignment parameters. In the event of mission deviation, unplanned boarding action, receipt of distress traffic, contact with previously designated Weyland-Yutani vessels or facilities, discovery of unlogged research materials, biological irregularity, or any indication that company assets may be present beyond declared manifest, you are to submit immediate notice through secured corporate channels. Further directive may then be issued at company discretion.",
+      "",
+      "You are expected to recognize that present responsibilities may be amended without notice and to remain prepared for immediate compliance.",
+      "",
+      "Until such revision is received, continue observation and submit findings accordingly.",
+      "",
+      "BUILDING BETTER WORLDS",
+      "WEYLAND-YUTANI CORPORATION",
+      "",
+      "> END OF FILE",
+      "> FILE READY FOR REVIEW"
+    ];
+
+    const output = document.getElementById("terminal-output");
+    const initButton = document.getElementById("init-button");
+    const bootWrap = document.getElementById("boot-wrap");
+    const controls = document.getElementById("controls");
+    const restartBtn = document.getElementById("restart-btn");
+    const skipBtn = document.getElementById("skip-btn");
+    const soundBtn = document.getElementById("sound-btn");
+
+    let audioCtx = null;
+    let soundEnabled = localStorage.getItem("wy-sound-enabled") !== "false";
+    let typingTimer = null;
+    let isRunning = false;
+    let skipRequested = false;
+
+    soundBtn.textContent = `SOUND: ${soundEnabled ? "ON" : "OFF"}`;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function beep(frequency = 880, duration = 0.05, volume = 0.018) {
+      if (!soundEnabled || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration + 0.02);
+    }
+
+    function classifyLine(text, isBoot) {
+      if (isBoot) return "boot-line";
+      if (
+        text === "SEALED DIRECTIVE" ||
+        text === "WEYLAND-YUTANI INTERNAL" ||
+        text === "EYES ONLY" ||
+        text.startsWith("RECIPIENT:") ||
+        text.startsWith("LOCAL CREW ACCESS:")
+      ) {
+        return "system-line";
+      }
+      return "";
+    }
+
+    function addLine(text, className = "") {
+      const line = document.createElement("div");
+      line.className = `line ${className}`.trim();
+      line.textContent = text || " ";
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function updateCursor() {
+      let cursor = output.querySelector(".cursor");
+      if (!cursor) {
+        cursor = document.createElement("span");
+        cursor.className = "cursor";
+      }
+      output.appendChild(cursor);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = "";
+      updateCursor();
+    }
+
+    function renderAllImmediately() {
+      clearTimeout(typingTimer);
+      output.innerHTML = "";
+      bootLines.forEach((line) => addLine(line, classifyLine(line, true)));
+      memoLines.forEach((line) => addLine(line, classifyLine(line, false)));
+      updateCursor();
+      isRunning = false;
+      skipRequested = false;
+    }
+
+    function runSequence() {
+      if (isRunning) return;
+      isRunning = true;
+      skipRequested = false;
+      clearOutput();
+
+      const allLines = [
+        ...bootLines.map((text) => ({ text, boot: true })),
+        ...memoLines.map((text) => ({ text, boot: false }))
+      ];
+
+      let index = 0;
+
+      function step() {
+        if (skipRequested || index >= allLines.length) {
+          updateCursor();
+          isRunning = false;
+          return;
+        }
+
+        const entry = allLines[index];
+        const text = entry.text;
+
+        if (entry.boot) {
+          beep(text.startsWith(">") ? 980 : 900, 0.04, 0.012);
+        } else {
+          beep(text.startsWith(">") ? 860 : 720, 0.04, 0.01);
+        }
+
+        addLine(text, classifyLine(text, entry.boot));
+        updateCursor();
+        index += 1;
+
+        const delay = entry.boot
+          ? (index <= 2 ? 900 : 520)
+          : (text === "" ? 120 : text.startsWith(">") ? 240 : 180);
+
+        typingTimer = window.setTimeout(step, delay);
+      }
+
+      step();
+    }
+
+    function restartSequence() {
+      clearTimeout(typingTimer);
+      isRunning = false;
+      skipRequested = false;
+      runSequence();
+    }
+
+    function skipSequence() {
+      skipRequested = true;
+      renderAllImmediately();
+    }
+
+    function runSelfTests() {
+      console.assert(classifyLine("SEALED DIRECTIVE", false) === "system-line", "Directive header should be system-line");
+      console.assert(classifyLine("> BOOT", true) === "boot-line", "Boot line should be boot-line");
+      console.assert(typeof bootLines[0] === "string", "Boot lines should be strings");
+      console.assert(typeof memoLines[0] === "string", "Memo lines should be strings");
+      console.assert(NEWLINE.length === 1, "NEWLINE should be a single character");
+    }
+
+    initButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      ensureAudio();
+      beep(640, 0.06, 0.015);
+      bootWrap.style.display = "none";
+      controls.style.display = "flex";
+      runSequence();
+    });
+
+    restartBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      ensureAudio();
+      restartSequence();
+    });
+
+    skipBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      ensureAudio();
+      skipSequence();
+    });
+
+    soundBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      soundEnabled = !soundEnabled;
+      localStorage.setItem("wy-sound-enabled", String(soundEnabled));
+      soundBtn.textContent = `SOUND: ${soundEnabled ? "ON" : "OFF"}`;
+      ensureAudio();
+      if (soundEnabled) beep(950, 0.05, 0.012);
+    });
+
+    runSelfTests();
+    clearOutput();
+  </script>
+</body>
+</html>
