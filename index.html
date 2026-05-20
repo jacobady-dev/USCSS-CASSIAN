@@ -356,6 +356,23 @@
       line-height: 1.5;
     }
 
+    .proceed-wrap {
+      margin-top: 14px;
+      display: none;
+    }
+
+    .proceed-wrap.visible {
+      display: block;
+    }
+
+    .proceed-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--amber-text);
+      opacity: 0.78;
+      line-height: 1.5;
+    }
+
     .footer-note {
       margin-top: 18px;
       font-size: 11px;
@@ -445,6 +462,23 @@
 
     .attendance-message.hidden {
       display: none;
+    }
+
+    .claim-confirm {
+      margin-top: 14px;
+      border: 1px solid rgba(255, 208, 138, 0.38);
+      background: rgba(255, 208, 138, 0.08);
+      padding: 14px;
+      color: var(--amber-text);
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      display: none;
+      box-shadow: inset 0 0 12px rgba(255, 179, 71, 0.04);
+    }
+
+    .claim-confirm.visible {
+      display: block;
     }
 
     .roles-shell {
@@ -558,6 +592,11 @@
           <button id="sound-btn">SOUND: ON</button>
         </div>
 
+        <div id="proceed-wrap" class="proceed-wrap">
+          <button id="proceed-btn">PROCEED TO CREW ASSIGNMENT</button>
+          <div class="proceed-note">Terminal record may be reviewed at any time above. Crew assignment access continues below.</div>
+        </div>
+
         <div class="footer-note">WEYLAND-YUTANI INTERNAL SYSTEM // BUILDING BETTER WORLDS</div>
 
         <section id="crew-assignment" class="assignment-panel">
@@ -582,6 +621,7 @@
           </div>
 
           <div id="attendance-message" class="attendance-message hidden"></div>
+          <div id="claim-confirm" class="claim-confirm"></div>
 
           <div id="roles-shell" class="roles-shell locked">
             <div id="roles-lock-copy" class="roles-lock-copy">CONFIRM AVAILABILITY TO ACCESS CREW ASSIGNMENT.</div>
@@ -733,6 +773,8 @@
     const restartBtn = document.getElementById('restart-btn');
     const skipBtn = document.getElementById('skip-btn');
     const soundBtn = document.getElementById('sound-btn');
+    const proceedWrap = document.getElementById('proceed-wrap');
+    const proceedBtn = document.getElementById('proceed-btn');
     const flashOverlay = document.getElementById('flash-overlay');
     const terminalShell = document.getElementById('terminal-shell');
 
@@ -742,6 +784,7 @@
     const rolesShell = document.getElementById('roles-shell');
     const rolesLockCopy = document.getElementById('roles-lock-copy');
     const attendanceMessage = document.getElementById('attendance-message');
+    const claimConfirm = document.getElementById('claim-confirm');
     const attendYesBtn = document.getElementById('attend-yes-btn');
     const attendNoBtn = document.getElementById('attend-no-btn');
 
@@ -837,6 +880,20 @@
       updateCursor();
     }
 
+    function showProceed() {
+      proceedWrap.classList.add('visible');
+    }
+
+    function hideProceed() {
+      proceedWrap.classList.remove('visible');
+    }
+
+    function resetTerminalView() {
+      requestAnimationFrame(() => {
+        output.scrollTop = 0;
+      });
+    }
+
     function lineClassForText(text, boot = false) {
       if (boot) return 'boot-line';
       if (text.startsWith('FILE:') || text.startsWith('CROSS-REFERENCE:') || text.startsWith('SPECIAL HANDLING')) {
@@ -891,12 +948,15 @@
       bootLines.forEach(line => addLine(line, lineClassForText(line, true)));
       memoLines.forEach(line => addLine(line, lineClassForText(line, false)));
       updateCursor();
+      showProceed();
+      resetTerminalView();
     }
 
     async function runSequence() {
       if (isRunning) return;
       isRunning = true;
       skipRequested = false;
+      hideProceed();
       clearOutput();
       await printLines(bootLines, 200, true);
       if (!skipRequested) {
@@ -905,12 +965,15 @@
       }
       updateCursor();
       isRunning = false;
+      showProceed();
+      resetTerminalView();
     }
 
     function restartSequence() {
       clearTimeout(currentTimer);
       skipRequested = false;
       isRunning = false;
+      hideProceed();
       runSequence();
     }
 
@@ -929,6 +992,16 @@
       }, 2600);
     }
 
+    function showClaimConfirm(message) {
+      claimConfirm.textContent = message;
+      claimConfirm.classList.add('visible');
+    }
+
+    function hideClaimConfirm() {
+      claimConfirm.textContent = '';
+      claimConfirm.classList.remove('visible');
+    }
+
     function setAttendanceState(state) {
       if (state === 'yes') {
         attendanceConfirmed = true;
@@ -936,14 +1009,21 @@
         rolesShell.classList.remove('locked');
         rolesLockCopy.textContent = 'ATTENDANCE STATUS: CONFIRMED // CREW ASSIGNMENT ACCESS GRANTED';
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED\nCREW ASSIGNMENT ACCESS GRANTED\nSELECT ONE OPEN BILLET TO RESERVE YOUR BERTH.';
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED
+CREW ASSIGNMENT ACCESS GRANTED
+SELECT ONE OPEN BILLET TO RESERVE YOUR BERTH.';
+        hideClaimConfirm();
       } else if (state === 'no') {
         attendanceConfirmed = false;
         declinedAttendance = true;
         rolesShell.classList.add('locked');
         rolesLockCopy.textContent = 'CREW ASSIGNMENT ACCESS RESTRICTED';
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: DECLINED\nCREW ASSIGNMENT ACCESS RESTRICTED\nNO ACTIVE BERTH RESERVED\nCONTACT WEYLAND-YUTANI PERSONNEL IF AVAILABILITY CHANGES.';
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: DECLINED
+CREW ASSIGNMENT ACCESS RESTRICTED
+NO ACTIVE BERTH RESERVED
+CONTACT WEYLAND-YUTANI PERSONNEL IF AVAILABILITY CHANGES.';
+        hideClaimConfirm();
       } else {
         attendanceConfirmed = false;
         declinedAttendance = false;
@@ -951,6 +1031,7 @@
         rolesLockCopy.textContent = 'CONFIRM AVAILABILITY TO ACCESS CREW ASSIGNMENT.';
         attendanceMessage.classList.add('hidden');
         attendanceMessage.textContent = '';
+        hideClaimConfirm();
       }
       renderRoles(rolesState);
     }
@@ -1060,7 +1141,12 @@
         });
 
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED\nBERTH RESERVED SUCCESSFULLY\nFOLLOW-UP MATERIALS WILL BE ISSUED AFTER ASSIGNMENT CONFIRMATION.';
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED
+BERTH RESERVED SUCCESSFULLY';
+        showClaimConfirm('ASSIGNMENT CONFIRMED
+PAPERWORK WILL BE SENT SHORTLY.
+WEYLAND-YUTANI THANKS YOU FOR CHOOSING TO SERVE ABOARD THE USCSS CASSIAN.
+FOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION.');
       } catch (err) {
         alert(err.message || 'Could not claim role.');
         console.error(err);
@@ -1142,6 +1228,10 @@
         return;
       }
       setAttendanceState('no');
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      document.getElementById('crew-assignment').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     clearOutput();
