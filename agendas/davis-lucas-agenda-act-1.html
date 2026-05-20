@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Davis / Lucas Agenda Act I</title>
+  <style>
+    :root {
+      --bg: #000;
+      --line: #8fc7cf;
+      --text: #cdeef2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(15, 55, 65, 0.18) 0%, rgba(0, 0, 0, 0.94) 65%),
+        #000;
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 18%, rgba(255,255,255,0.65) 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 74%, rgba(255,255,255,0.75) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 68%, rgba(255,255,255,0.8) 0 1px, transparent 2px);
+      background-size: 260px 260px, 320px 320px, 280px 280px, 300px 300px;
+      opacity: 0.5;
+    }
+
+    .memo {
+      width: min(760px, 100%);
+      position: relative;
+      border: 2px solid var(--line);
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(180, 255, 255, 0.07) 0px,
+          rgba(180, 255, 255, 0.07) 1px,
+          transparent 2px,
+          transparent 4px
+        ),
+        linear-gradient(180deg, rgba(7,18,24,0.96), rgba(3,8,12,0.98));
+      padding: 18px 22px;
+      box-shadow: 0 0 18px rgba(127,182,190,0.14), inset 0 0 20px rgba(127,182,190,0.07);
+      clip-path: polygon(2% 0, 38% 0, 41% 8%, 98% 8%, 100% 16%, 100% 84%, 98% 100%, 2% 100%, 0 88%, 0 12%);
+    }
+
+    .title {
+      font-size: 1.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .rule {
+      height: 1px;
+      background: rgba(143,199,207,0.55);
+      margin-bottom: 14px;
+    }
+
+    .content {
+      font-size: 1.08rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .memo {
+        padding: 14px 16px;
+        clip-path: none;
+      }
+      .title { font-size: 1.35rem; }
+      .content { font-size: 0.96rem; }
+    }
+  </style>
+</head>
+<body>
+  <section class="memo">
+    <div class="title">DAVIS / LUCAS AGENDA, ACT I</div>
+    <div class="rule"></div>
+    <div class="content">God, these cargo runs are fucking boring, and taking any chance to break the monotony sounds better than another dead stretch of transit. At the same time, you are not only Davis. You are not who you seem to be. You are, in fact, a synthetic undercover agent codenamed Lucas, working for Bionational—a corporate rival to Weyland Yutani. None of the rest of the crew know this. You have been informed that the Cassian will be redirected en route to investigate the USCSS Cronus, a Weyland-Yutani science ship missing for 73 years. Make sure to follow along with this investigation, to learn whatever you can about what’s onboard the derelict ship. And whatever you do—don’t expose yourself as an android</div>
+  </section>
+</body>
+</html>
