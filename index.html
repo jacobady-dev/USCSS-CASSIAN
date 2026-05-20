@@ -292,6 +292,8 @@
 
     button {
       background: #100900;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       color: var(--amber);
       border: 1px solid var(--amber);
       padding: 9px 14px;
@@ -399,6 +401,7 @@
 
     #player-name {
       background: #120800;
+      touch-action: manipulation;
       color: #ffe7bf;
       border: 1px solid #ffb347;
       padding: 10px 12px;
@@ -514,6 +517,15 @@
     }
 
     @media (max-width: 640px) {
+      .boot-button-wrap {
+        width: 100%;
+      }
+      .boot-button-wrap button {
+        min-height: 48px;
+      }
+      #player-name {
+        min-width: 0;
+      }
       .screen { padding: 10px; }
       .content, .header, .status-bar {
         padding-left: 12px;
@@ -688,6 +700,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const mobileMode = window.matchMedia('(max-width: 640px)').matches || window.matchMedia('(pointer: coarse)').matches;
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -817,6 +830,16 @@
     const claimConfirm = document.getElementById('claim-confirm');
     const attendYesBtn = document.getElementById('attend-yes-btn');
     const attendNoBtn = document.getElementById('attend-no-btn');
+
+    function activateTerminal(skipAnimation = false) {
+      bootWrap.style.display = 'none';
+      controls.style.display = 'flex';
+      if (skipAnimation) {
+        renderAllImmediately();
+      } else {
+        runSequence();
+      }
+    }
 
     let audioCtx = null;
     let soundEnabled = localStorage.getItem(SOUND_KEY) !== 'false';
@@ -1211,14 +1234,15 @@ FOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION.');
       authStatus.textContent = 'AUTH: DATA LINK ERROR';
     });
 
-    initButton.addEventListener('click', (event) => {
-      event.preventDefault();
+    function handleInit(event) {
+      if (event) event.preventDefault();
       ensureAudio();
       beep(640, 0.06, 'square', 0.015);
-      bootWrap.style.display = 'none';
-      controls.style.display = 'flex';
-      runSequence();
-    });
+      activateTerminal(false);
+    }
+
+    initButton.addEventListener('click', handleInit);
+    initButton.addEventListener('touchend', handleInit, { passive: false });
 
     restartBtn.addEventListener('click', (event) => {
       event.preventDefault();
@@ -1270,6 +1294,10 @@ FOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION.');
     setAttendanceState('idle');
     renderRoles([]);
     startAmbientGlitches();
+
+    if (mobileMode) {
+      activateTerminal(true);
+    }
   </script>
 </body>
 </html>
