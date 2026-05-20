@@ -514,13 +514,79 @@
     }
 
     @media (max-width: 640px) {
-      .screen { padding: 14px; }
-      .content, .header, .status-bar { padding-left: 16px; padding-right: 16px; }
-      #terminal-output { font-size: 14px; height: 260px; min-height: 260px; max-height: 260px; }
-      .controls, .attendance-actions { gap: 8px; }
-      button, #player-name { width: 100%; }
-      .status-pill { width: 100%; }
-      .roles-grid { max-height: none; }
+      .screen { padding: 10px; }
+      .content, .header, .status-bar {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .header-title {
+        font-size: 22px;
+        letter-spacing: 2px;
+      }
+      .header-subtitle {
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      .status-bar {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .status-pill {
+        width: 100%;
+        white-space: normal;
+      }
+      #terminal-output {
+        font-size: 14px;
+        height: 220px;
+        min-height: 220px;
+        max-height: 220px;
+        padding: 12px;
+      }
+      .controls,
+      .attendance-actions,
+      .assign-controls {
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      button,
+      #player-name {
+        width: 100%;
+      }
+      .roles-grid {
+        grid-template-columns: 1fr;
+        max-height: none;
+      }
+      .role-card {
+        min-height: auto;
+      }
+      .assignment-panel h2 {
+        font-size: 18px;
+      }
+      .notice-box,
+      .attendance-box,
+      .attendance-message,
+      .claim-confirm {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 640px), (prefers-reduced-motion: reduce) {
+      .terminal,
+      .terminal.glitch,
+      .noise-overlay,
+      .noise-overlay::before,
+      .noise-overlay::after,
+      .flash-overlay.active,
+      .line,
+      .cursor {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+
+      .noise-overlay::after {
+        opacity: 0.22;
+      }
     }
   </style>
 </head>
