@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cham // Cargo Handler</title>
+  <style>
+    :root {
+      --bg: #02060a;
+      --panel: #071218;
+      --line: #7fb6be;
+      --text: #d6f4f7;
+      --text-soft: #a9dce3;
+      --glow: rgba(140, 220, 230, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(15, 55, 65, 0.25) 0%, rgba(0, 0, 0, 0.92) 65%),
+        #000;
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 8% 16%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 82% 10%, rgba(255,255,255,0.7) 0 1px, transparent 2px),
+        radial-gradient(circle at 20% 78%, rgba(255,255,255,0.6) 0 1px, transparent 2px),
+        radial-gradient(circle at 76% 72%, rgba(255,255,255,0.8) 0 1px, transparent 2px),
+        radial-gradient(circle at 54% 30%, rgba(255,255,255,0.5) 0 1px, transparent 2px);
+      background-size: 220px 220px, 320px 320px, 280px 280px, 260px 260px, 340px 340px;
+      opacity: 0.45;
+    }
+
+    .dossier-card {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .dossier-frame {
+      position: relative;
+      padding: 16px;
+      border: 2px solid var(--line);
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(180, 255, 255, 0.08) 0px,
+          rgba(180, 255, 255, 0.08) 1px,
+          transparent 2px,
+          transparent 4px
+        ),
+        linear-gradient(180deg, rgba(7, 18, 24, 0.96), rgba(2, 8, 12, 0.98));
+      box-shadow:
+        0 0 18px rgba(127, 182, 190, 0.14),
+        inset 0 0 20px rgba(127, 182, 190, 0.08);
+      overflow: hidden;
+    }
+
+    .dossier-frame::before,
+    .dossier-frame::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+      background: transparent;
+    }
+
+    .dossier-frame::before {
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+      border-top: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+      opacity: 0.85;
+    }
+
+    .dossier-frame::after {
+      bottom: 10px;
+      left: 10px;
+      width: 34px;
+      height: 34px;
+      border-bottom: 2px solid var(--line);
+      border-left: 2px solid var(--line);
+      opacity: 0.85;
+    }
+
+    .dossier-title {
+      font-size: 1.35rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: var(--text);
+      text-shadow: 0 0 10px var(--glow);
+      position: relative;
+      z-index: 1;
+    }
+
+    .portrait-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border: 2px solid var(--line);
+      overflow: hidden;
+      background: #0a1216;
+      margin-bottom: 12px;
+    }
+
+    .portrait-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.08) 0px,
+          rgba(255,255,255,0.08) 1px,
+          transparent 2px,
+          transparent 4px
+        );
+      mix-blend-mode: screen;
+      opacity: 0.6;
+    }
+
+    .dossier-portrait {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.7) contrast(1.05) brightness(0.92);
+    }
+
+    .dossier-role {
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .dossier-field,
+    .dossier-stat {
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      border: 1px solid rgba(127, 182, 190, 0.45);
+      background: rgba(127, 182, 190, 0.08);
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+
+    .dossier-blurb {
+      margin: 14px 0;
+      line-height: 1.55;
+      font-size: 0.95rem;
+      color: var(--text);
+      font-weight: bold;
+    }
+
+    .label {
+      color: #f1ffff;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 12px;
+      }
+
+      .dossier-frame {
+        padding: 12px;
+      }
+
+      .dossier-title {
+        font-size: 1.1rem;
+      }
+
+      .dossier-field,
+      .dossier-stat,
+      .dossier-blurb,
+      .dossier-role {
+        font-size: 0.88rem;
+      }
+
+      .dossier-frame::before,
+      .dossier-frame::after {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="dossier-card">
+    <div class="dossier-frame">
+      <div class="dossier-title">CHAM, CARGO HANDLER</div>
+
+      <div class="portrait-frame">
+        <img
+          src="../images/cargo-handler.jpg"
+          alt="Lyron Cham portrait"
+          class="dossier-portrait"
+        />
+      </div>
+
+      <div class="dossier-role">Cargo Handler / Deckhand on the USCSS Cassian</div>
+
+      <div class="dossier-field"><span class="label">FULL NAME:</span> Lyron Cham</div>
+      <div class="dossier-field"><span class="label">AGE:</span> 32</div>
+      <div class="dossier-field"><span class="label">PERSONALITY:</span> Loyal</div>
+
+      <div class="dossier-blurb">
+        You've spent the last several months aboard the Cassian handling cargo,
+        heavy equipment, and the kinds of shipboard labor that keep everything else
+        moving. You grew up around work, not comfort, and you learned early that
+        the people beside you matter more than whatever company happens to own the hull.
+        This crew is the closest thing you have to family, and when pressure hits,
+        your first instinct is to protect them, even if it means taking the risk yourself.
+      </div>
+
+      <div class="dossier-stat"><span class="label">STRENGTH</span> 5, <span class="label">AGILITY</span> 3, <span class="label">WITS</span> 2, <span class="label">EMPATHY</span> 4</div>
+      <div class="dossier-stat"><span class="label">HEALTH:</span> 5</div>
+      <div class="dossier-stat"><span class="label">SKILLS:</span> Heavy Machinery 3, Close Combat 2, Stamina 2, Observation 1, Survival 1, Comtech 1</div>
+      <div class="dossier-stat"><span class="label">TALENT:</span> True Grit</div>
+      <div class="dossier-stat"><span class="label">SIGNATURE ITEM:</span> Rosary</div>
+    </div>
+  </section>
+</body>
+</html>
