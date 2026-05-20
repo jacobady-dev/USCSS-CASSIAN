@@ -82,7 +82,9 @@
     }
 
     @keyframes terminalBreath {
-      0%, 100% { filter: brightness(1.06) contrast(1.04); }
+      0%, 100% { filter: brightness(1.01) contrast(1.02); }
+      50% { filter: brightness(0.99) contrast(1.05); }
+    }
       50% { filter: brightness(1.01) contrast(1.1); }
     }
 
@@ -100,7 +102,7 @@
       inset: 0;
       pointer-events: none;
       opacity: 0;
-      background: radial-gradient(circle at center, rgba(255, 213, 140, 0.22), rgba(255, 179, 71, 0.06) 35%, transparent 70%);
+      background: radial-gradient(circle at center, rgba(255, 213, 140, 0.12), rgba(255, 179, 71, 0.03) 35%, transparent 70%);
       mix-blend-mode: screen;
     }
 
@@ -118,7 +120,7 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      opacity: 0.16;
+      opacity: 0.11;
       mix-blend-mode: screen;
       background-image:
         radial-gradient(circle at 12% 18%, rgba(255, 235, 185, 0.95) 0 1.15px, transparent 1.45px),
@@ -254,48 +256,16 @@
       line-height: 1.52;
       font-size: 15px;
       color: var(--amber-text);
-      min-height: 420px;
-      text-shadow: 0 0 8px rgba(255, 179, 71, 0.26);
-      max-height: 65vh;
+      height: 320px;
+      min-height: 320px;
+      max-height: 320px;
+      text-shadow: 0 0 5px rgba(255, 179, 71, 0.18);
       overflow-y: auto;
-      padding-right: 8px;
+      padding: 14px;
+      border: 1px solid rgba(255, 179, 71, 0.24);
+      background: rgba(0, 0, 0, 0.28);
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.4);
     }
-
-    #terminal-output::-webkit-scrollbar,
-    .roles-grid::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    #terminal-output::-webkit-scrollbar-track,
-    .roles-grid::-webkit-scrollbar-track {
-      background: rgba(255, 179, 71, 0.03);
-    }
-
-    #terminal-output::-webkit-scrollbar-thumb,
-    .roles-grid::-webkit-scrollbar-thumb {
-      background: rgba(255, 179, 71, 0.25);
-      border: 1px solid rgba(255, 179, 71, 0.35);
-    }
-
-    .line {
-      opacity: 0;
-      transform: translateY(2px);
-      animation: lineIn 0.14s ease forwards;
-    }
-
-    .boot-line {
-      color: #fff1cf;
-    }
-
-    .system-line {
-      color: #ffe1a8;
-    }
-
-    @keyframes lineIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .cursor {
@@ -546,7 +516,7 @@
     @media (max-width: 640px) {
       .screen { padding: 14px; }
       .content, .header, .status-bar { padding-left: 16px; padding-right: 16px; }
-      #terminal-output { font-size: 14px; min-height: 360px; max-height: 60vh; }
+      #terminal-output { font-size: 14px; height: 260px; min-height: 260px; max-height: 260px; }
       .controls, .attendance-actions { gap: 8px; }
       button, #player-name { width: 100%; }
       .status-pill { width: 100%; }
@@ -882,11 +852,7 @@
       proceedWrap.classList.remove('visible');
     }
 
-    function resetTerminalView() {
-      requestAnimationFrame(() => {
-        output.scrollTop = 0;
-      });
-    }
+    
 
     function lineClassForText(text, boot = false) {
       if (boot) return 'boot-line';
@@ -942,7 +908,6 @@
       memoLines.forEach(line => addLine(line, lineClassForText(line, false)));
       updateCursor();
       showProceed();
-      resetTerminalView();
     }
 
     async function runSequence() {
@@ -1002,7 +967,9 @@
         rolesShell.classList.remove('locked');
         rolesLockCopy.textContent = 'ATTENDANCE STATUS: CONFIRMED // CREW ASSIGNMENT ACCESS GRANTED';
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED\nCREW ASSIGNMENT ACCESS GRANTED\nSELECT ONE OPEN BILLET TO RESERVE YOUR BERTH.';
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED
+CREW ASSIGNMENT ACCESS GRANTED
+SELECT ONE OPEN BILLET TO RESERVE YOUR BERTH.';
         hideClaimConfirm();
       } else if (state === 'no') {
         attendanceConfirmed = false;
@@ -1010,7 +977,10 @@
         rolesShell.classList.add('locked');
         rolesLockCopy.textContent = 'CREW ASSIGNMENT ACCESS RESTRICTED';
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: DECLINED\nCREW ASSIGNMENT ACCESS RESTRICTED\nNO ACTIVE BERTH RESERVED\nCONTACT WEYLAND-YUTANI PERSONNEL IF AVAILABILITY CHANGES.';
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: DECLINED
+CREW ASSIGNMENT ACCESS RESTRICTED
+NO ACTIVE BERTH RESERVED
+CONTACT WEYLAND-YUTANI PERSONNEL IF AVAILABILITY CHANGES.';
         hideClaimConfirm();
       } else {
         attendanceConfirmed = false;
@@ -1130,8 +1100,12 @@
         });
 
         attendanceMessage.classList.remove('hidden');
-        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED\nBERTH RESERVED SUCCESSFULLY';
-        showClaimConfirm('ASSIGNMENT CONFIRMED\nPAPERWORK WILL BE SENT SHORTLY.\nWEYLAND-YUTANI THANKS YOU FOR CHOOSING TO SERVE ABOARD THE USCSS CASSIAN.\nFOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION.');
+        attendanceMessage.textContent = 'ATTENDANCE STATUS: CONFIRMED
+BERTH RESERVED SUCCESSFULLY';
+        showClaimConfirm('ASSIGNMENT CONFIRMED
+PAPERWORK WILL BE SENT SHORTLY.
+WEYLAND-YUTANI THANKS YOU FOR CHOOSING TO SERVE ABOARD THE USCSS CASSIAN.
+FOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION.');
       } catch (err) {
         alert(err.message || 'Could not claim role.');
         console.error(err);
