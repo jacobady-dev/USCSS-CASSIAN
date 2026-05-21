@@ -1,0 +1,109 @@
+:root {
+  --bg: #000;
+  --line: #8fc7cf;
+  --text: #cdeef2;
+  --text-soft: #9fd6de;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at center, rgba(15, 55, 65, 0.18) 0%, rgba(0, 0, 0, 0.94) 65%),
+    #000;
+  color: var(--text);
+  font-family: "Courier New", Courier, monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 18%, rgba(255,255,255,0.65) 0 1px, transparent 2px),
+    radial-gradient(circle at 22% 74%, rgba(255,255,255,0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 68%, rgba(255,255,255,0.8) 0 1px, transparent 2px);
+  background-size: 260px 260px, 320px 320px, 280px 280px, 300px 300px;
+  opacity: 0.5;
+}
+
+.card {
+  width: min(820px, 100%);
+  position: relative;
+  border: 2px solid var(--line);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(180, 255, 255, 0.07) 0px,
+      rgba(180, 255, 255, 0.07) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    linear-gradient(180deg, rgba(7,18,24,0.96), rgba(3,8,12,0.98));
+  padding: 18px 22px;
+  box-shadow:
+    0 0 18px rgba(127,182,190,0.14),
+    inset 0 0 20px rgba(127,182,190,0.07);
+}
+
+.title {
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.rule {
+  height: 1px;
+  background: rgba(143,199,207,0.55);
+  margin-bottom: 14px;
+}
+
+ul {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 1.06rem;
+  line-height: 1.6;
+}
+
+li + li {
+  margin-top: 10px;
+}
+
+.notes {
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.index-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.index-list li {
+  margin: 8px 0;
+}
+
+a {
+  color: var(--text);
+}
+
+a:hover {
+  color: var(--text-soft);
+}
+
+@media (max-width: 640px) {
+  body { padding: 12px; }
+  .card { padding: 14px 16px; }
+  .title { font-size: 1.35rem; }
+  ul, .notes { font-size: 0.96rem; }
+}
