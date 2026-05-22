@@ -3,1101 +3,185 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MU/TH/UR 6000 // Personnel Assignment Notice</title>
+  <title>USCSS Cassian Repository Hub</title>
   <style>
     :root {
-      --amber: #ffb347;
-      --amber-bright: #ffd891;
-      --amber-text: #ffe7bf;
-      --amber-border: rgba(255, 179, 71, 0.28);
-      --panel: rgba(255, 179, 71, 0.05);
-      --bg: #000000;
+      --bg: #000;
+      --line: #8fc7cf;
+      --text: #cdeef2;
+      --text-soft: #9fd6de;
+      --panel: rgba(180, 255, 255, 0.06);
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--amber);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(15, 55, 65, 0.18) 0%, rgba(0, 0, 0, 0.94) 65%),
+        #000;
+      color: var(--text);
       font-family: "Courier New", Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
       overflow-x: hidden;
     }
 
-    .screen {
-      min-height: 100vh;
-      padding: 20px;
-      background:
-        radial-gradient(circle at center, rgba(50, 24, 0, 0.68) 0%, rgba(8, 4, 0, 0.92) 48%, #000 78%),
-        #000;
-      position: relative;
-    }
-
-    .screen::before {
+    body::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255, 179, 71, 0.035) 0px,
-        rgba(255, 179, 71, 0.035) 1px,
-        transparent 2px,
-        transparent 4px
-      );
-      opacity: 0.18;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 18%, rgba(255,255,255,0.65) 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 74%, rgba(255,255,255,0.75) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 68%, rgba(255,255,255,0.8) 0 1px, transparent 2px);
+      background-size: 260px 260px, 320px 320px, 280px 280px, 300px 300px;
+      opacity: 0.5;
     }
 
-    .terminal {
-      max-width: 980px;
-      margin: 0 auto;
-      border: 2px solid var(--amber);
-      background: linear-gradient(180deg, rgba(10, 5, 0, 0.97), rgba(2, 1, 0, 0.99));
-      box-shadow: 0 0 14px rgba(255, 120, 20, 0.08), inset 0 0 80px rgba(0, 0, 0, 0.3);
+    .card {
+      width: min(960px, 100%);
       position: relative;
-      overflow: hidden;
-    }
-
-    .noise-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.11;
-      background-image:
-        radial-gradient(circle at 14% 22%, rgba(255, 238, 194, 0.9) 0 1.1px, transparent 1.4px),
-        radial-gradient(circle at 80% 32%, rgba(255, 197, 101, 0.78) 0 1.1px, transparent 1.45px),
-        radial-gradient(circle at 40% 74%, rgba(255, 228, 177, 0.6) 0 1px, transparent 1.25px),
-        radial-gradient(circle at 72% 84%, rgba(255, 164, 58, 0.5) 0 0.95px, transparent 1.15px);
-      background-size: 72px 72px, 116px 116px, 92px 92px, 146px 146px;
-      animation: noiseShift 0.12s steps(2) infinite;
-      mix-blend-mode: screen;
-    }
-
-    @keyframes noiseShift {
-      0% { transform: translate(0, 0); }
-      50% { transform: translate(1px, -1px); }
-      100% { transform: translate(0, 0); }
-    }
-
-    .header {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid var(--amber-border);
-    }
-
-    .header-title {
-      font-size: clamp(24px, 4vw, 34px);
-      letter-spacing: 4px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .header-subtitle {
-      font-size: 12px;
-      letter-spacing: 1px;
-      opacity: 0.9;
-    }
-
-    .status-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 12px 22px;
-      border-bottom: 1px solid var(--amber-border);
-      background: rgba(255, 179, 71, 0.02);
-      font-size: 12px;
-    }
-
-    .status-pill {
-      padding: 6px 9px;
-      border: 1px solid var(--amber-border);
-      background: rgba(255, 179, 71, 0.03);
-      white-space: nowrap;
-    }
-
-    .content {
+      border: 2px solid var(--line);
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(180, 255, 255, 0.07) 0px,
+          rgba(180, 255, 255, 0.07) 1px,
+          transparent 2px,
+          transparent 4px
+        ),
+        linear-gradient(180deg, rgba(7,18,24,0.96), rgba(3,8,12,0.98));
       padding: 22px;
-      position: relative;
-      z-index: 1;
+      box-shadow: 0 0 18px rgba(127,182,190,0.14), inset 0 0 20px rgba(127,182,190,0.07);
     }
 
-    #terminal-output {
-      height: 320px;
-      overflow-y: auto;
-      padding: 14px;
-      border: 1px solid var(--amber-border);
-      background: rgba(0, 0, 0, 0.34);
-      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.45);
-      color: var(--amber-text);
-      font-size: 15px;
-      line-height: 1.52;
-      white-space: pre-wrap;
-      text-shadow: 0 0 4px rgba(255, 179, 71, 0.16);
-    }
-
-    #terminal-output::-webkit-scrollbar,
-    .roles-grid::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    #terminal-output::-webkit-scrollbar-track,
-    .roles-grid::-webkit-scrollbar-track {
-      background: rgba(255, 179, 71, 0.03);
-    }
-
-    #terminal-output::-webkit-scrollbar-thumb,
-    .roles-grid::-webkit-scrollbar-thumb {
-      background: rgba(255, 179, 71, 0.22);
-      border: 1px solid rgba(255, 179, 71, 0.3);
-    }
-
-    .line {
-      opacity: 0;
-      transform: translateY(2px);
-      animation: lineIn 0.12s ease forwards;
-    }
-
-    .boot-line { color: #fff1cf; }
-    .system-line { color: #ffe1a8; }
-
-    @keyframes lineIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 10px;
-      height: 1em;
-      margin-left: 4px;
-      background: var(--amber);
-      box-shadow: 0 0 8px rgba(255, 179, 71, 0.55);
-      animation: blink 1s steps(1) infinite;
-      vertical-align: text-bottom;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
-    .boot-button-wrap {
-      margin-top: 16px;
-      padding: 14px;
-      border: 1px solid var(--amber-border);
-      background: rgba(255, 179, 71, 0.04);
-      display: inline-flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .proceed-wrap {
-      margin-top: 14px;
-      display: none;
-    }
-
-    .proceed-wrap.visible { display: block; }
-
-    .proceed-note,
-    .note,
-    .footer-note {
-      font-size: 12px;
-      line-height: 1.5;
-      opacity: 0.78;
-    }
-
-    .footer-note {
-      margin-top: 18px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      opacity: 0.62;
-    }
-
-    button {
-      background: #100900;
-      color: var(--amber);
-      border: 1px solid var(--amber);
-      padding: 10px 14px;
-      font-family: inherit;
-      letter-spacing: 0.6px;
-      cursor: pointer;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    button:hover:not(:disabled) {
-      background: rgba(255, 179, 71, 0.08);
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .assignment-panel {
-      margin-top: 28px;
-      border-top: 1px solid var(--amber-border);
-      padding-top: 22px;
-    }
-
-    .assignment-panel h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
+    .title {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
       letter-spacing: 2px;
-      color: var(--amber-bright);
-    }
-
-    .assignment-copy {
-      margin: 0 0 12px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--amber-text);
-      opacity: 0.92;
-    }
-
-    .notice-box,
-    .attendance-box,
-    .attendance-message,
-    .claim-confirm,
-    .debug-box {
-      border: 1px solid var(--amber-border);
-      background: var(--panel);
-      padding: 14px;
-      margin-top: 14px;
-      color: var(--amber-text);
-    }
-
-    .notice-box,
-    .debug-box { font-size: 12px; line-height: 1.6; }
-
-    .debug-box {
-      display: none;
-      white-space: pre-wrap;
-    }
-
-    .debug-box.visible {
-      display: block;
-    }
-
-    .assign-controls {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-top: 16px;
-    }
-
-    #player-name {
-      background: #120800;
-      color: var(--amber-text);
-      border: 1px solid var(--amber);
-      padding: 10px 12px;
-      font-family: inherit;
-      min-width: 240px;
-    }
-
-    #auth-status {
-      font-size: 12px;
-      opacity: 0.82;
-      letter-spacing: 1px;
-      color: var(--amber-bright);
-    }
-
-    .attendance-label {
-      font-size: 12px;
-      letter-spacing: 1px;
       margin-bottom: 10px;
-      color: var(--amber-bright);
+      text-transform: uppercase;
     }
 
-    .attendance-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .attendance-message,
-    .claim-confirm {
-      font-size: 13px;
+    .subtitle {
+      font-size: 0.95rem;
       line-height: 1.6;
-      white-space: pre-wrap;
+      color: var(--text-soft);
+      margin-bottom: 16px;
     }
 
-    .attendance-message.hidden,
-    .claim-confirm,
-    .debug-box {
-      display: none;
+    .rule {
+      height: 1px;
+      background: rgba(143,199,207,0.55);
+      margin-bottom: 18px;
     }
 
-    .claim-confirm.visible {
-      display: block;
-      border-color: rgba(255, 208, 138, 0.34);
-      background: rgba(255, 208, 138, 0.08);
-    }
-
-    .roles-shell {
-      margin-top: 16px;
-    }
-
-    .roles-shell.locked .roles-grid {
-      filter: blur(1px) saturate(0.8);
-      opacity: 0.58;
-      pointer-events: none;
-    }
-
-    .roles-lock-copy {
-      margin-bottom: 12px;
-      font-size: 12px;
-      letter-spacing: 0.9px;
-      color: var(--amber-bright);
-    }
-
-    .roles-grid {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 12px;
-      max-height: 58vh;
-      overflow-y: auto;
-      padding-right: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
     }
 
-    .role-card {
-      border: 1px solid var(--amber-border);
-      background: rgba(255, 179, 71, 0.04);
-      padding: 14px;
-      min-height: 185px;
+    .panel {
+      border: 1px solid rgba(143,199,207,0.35);
+      background: var(--panel);
+      padding: 16px;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .panel p {
+      margin: 0 0 12px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text-soft);
+    }
+
+    .link-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
+      gap: 8px;
     }
 
-    .role-card h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-      color: var(--amber-bright);
+    a {
+      color: var(--text);
+      text-decoration: none;
     }
 
-    .role-card p {
-      margin: 0 0 10px;
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--amber-text);
-      opacity: 0.9;
-      flex: 1;
+    a:hover {
+      color: var(--text-soft);
     }
 
-    .role-meta {
-      font-size: 12px;
-      margin-bottom: 10px;
-      color: var(--amber-text);
-      opacity: 0.84;
-      line-height: 1.45;
-      min-height: 34px;
-    }
-
-    .role-card.taken { opacity: 0.82; }
-
-    .role-card.mine {
-      box-shadow: inset 0 0 0 1px rgba(255, 208, 138, 0.28), 0 0 8px rgba(255, 179, 71, 0.06);
+    .footer {
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      opacity: 0.8;
+      line-height: 1.6;
     }
 
     @media (max-width: 640px) {
-      .screen { padding: 10px; }
-      .content, .header, .status-bar {
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-      .header-title {
-        font-size: 22px;
-        letter-spacing: 2px;
-      }
-      .header-subtitle {
-        font-size: 11px;
-        line-height: 1.4;
-      }
-      .status-bar {
-        flex-direction: column;
-        gap: 6px;
-      }
-      .status-pill {
-        width: 100%;
-        white-space: normal;
-      }
-      .boot-button-wrap {
-        width: 100%;
-      }
-      #terminal-output {
-        font-size: 14px;
-        height: 220px;
-      }
-      .controls,
-      .attendance-actions,
-      .assign-controls {
-        gap: 8px;
-        flex-direction: column;
-        align-items: stretch;
-      }
-      button,
-      #player-name {
-        width: 100%;
-      }
-      #player-name { min-width: 0; }
-      .roles-grid {
-        grid-template-columns: 1fr;
-        max-height: none;
-      }
-      .role-card { min-height: auto; }
-      .assignment-panel h2 { font-size: 18px; }
-      .notice-box,
-      .attendance-box,
-      .attendance-message,
-      .claim-confirm,
-      .debug-box {
-        padding: 12px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .noise-overlay,
-      .line,
-      .cursor {
-        animation: none !important;
-      }
+      body { padding: 12px; }
+      .card { padding: 16px; }
+      .subtitle, .panel p, .footer { font-size: 0.88rem; }
     }
   </style>
 </head>
 <body>
-  <div class="screen">
-    <div class="terminal">
-      <div class="noise-overlay" aria-hidden="true"></div>
+  <section class="card">
+    <div class="title">USCSS Cassian Repository Hub</div>
+    <div class="subtitle">Primary navigation for the Cassian one-shot materials. Use this page as a quick jump point to crew dossiers, act agendas, banter cards, and the live assignment terminal.</div>
+    <div class="rule"></div>
 
-      <div class="header">
-        <div class="header-title">MU/TH/UR 6000</div>
-        <div class="header-subtitle">COMMERCIAL TRANSPORT MAINFRAME // WEYLAND-YUTANI NETWORK ACCESS</div>
+    <div class="grid">
+      <div class="panel">
+        <h2>Assignment Terminal</h2>
+        <p>The live MU/TH/UR assignment notice and role-claim page.</p>
+        <ul class="link-list">
+          <li><a href="assignment-terminal.html">Open assignment terminal</a></li>
+        </ul>
       </div>
 
-      <div class="status-bar">
-        <div class="status-pill">NODE: USCSS CASSIAN</div>
-        <div class="status-pill">LINK: STABLE</div>
-        <div class="status-pill">DOCK STATUS: HARD-SEAL</div>
-        <div class="status-pill">CONTRACT ROUTE: WY-442-C</div>
+      <div class="panel">
+        <h2>Dossiers</h2>
+        <p>Character dossiers for the Cassian crew, including the full eight-role roster.</p>
+        <ul class="link-list">
+          <li><a href="dossier/">Open dossier index</a></li>
+        </ul>
       </div>
 
-      <div class="content">
-        <div id="terminal-output"></div>
+      <div class="panel">
+        <h2>Agendas</h2>
+        <p>Act-based agendas for pregens and homebrew roles.</p>
+        <ul class="link-list">
+          <li><a href="agendas/">Open agenda index</a></li>
+        </ul>
+      </div>
 
-        <div id="boot-wrap" class="boot-button-wrap">
-          <button id="init-button" type="button">INITIALIZE TERMINAL</button>
-          <div class="note">Audio on mobile and most browsers requires one tap or click before tones can play.</div>
-        </div>
-
-        <div id="controls" class="controls" style="display:none;">
-          <button id="restart-btn" type="button">RESTART SEQUENCE</button>
-          <button id="skip-btn" type="button">SKIP TO FULL TEXT</button>
-          <button id="sound-btn" type="button">SOUND: ON</button>
-        </div>
-
-        <div id="proceed-wrap" class="proceed-wrap">
-          <button id="proceed-btn" type="button">PROCEED TO CREW ASSIGNMENT</button>
-          <div class="proceed-note">Terminal record may be reviewed at any time above. Crew assignment access continues below.</div>
-        </div>
-
-        <div class="footer-note">WEYLAND-YUTANI INTERNAL SYSTEM // BUILDING BETTER WORLDS</div>
-
-        <section id="crew-assignment" class="assignment-panel">
-          <h2>CREW ASSIGNMENT CONSOLE</h2>
-          <p class="assignment-copy">Active duty billets aboard the USCSS Cassian remain open pending attendance confirmation and berth assignment.</p>
-
-          <div class="notice-box">NOTICE: Selection of a crew role constitutes confirmation of attendance. If your status changes after assignment, please contact Weyland-Yutani personnel immediately so your berth may be reassigned.</div>
-
-          <div class="assign-controls">
-            <input id="player-name" type="text" maxlength="40" placeholder="ENTER YOUR NAME" />
-            <div id="auth-status">AUTH: CONNECTING...</div>
-          </div>
-
-          <div class="attendance-box">
-            <div class="attendance-label">ATTENDANCE CONFIRMATION REQUIRED</div>
-            <div class="attendance-actions">
-              <button id="attend-yes-btn" type="button">I CAN ATTEND</button>
-              <button id="attend-no-btn" type="button">I CANNOT ATTEND AT THIS TIME</button>
-            </div>
-          </div>
-
-          <div id="attendance-message" class="attendance-message hidden"></div>
-          <div id="claim-confirm" class="claim-confirm"></div>
-          <div id="debug-box" class="debug-box"></div>
-
-          <div id="roles-shell" class="roles-shell locked">
-            <div id="roles-lock-copy" class="roles-lock-copy">CONFIRM AVAILABILITY TO ACCESS CREW ASSIGNMENT.</div>
-            <div id="roles-grid" class="roles-grid"></div>
-          </div>
-        </section>
+      <div class="panel">
+        <h2>Banter Cards</h2>
+        <p>Galley wake-up banter prompts and GM notes for the opening scene.</p>
+        <ul class="link-list">
+          <li><a href="banter-cards/">Open banter card index</a></li>
+        </ul>
       </div>
     </div>
-  </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getFirestore, collection, doc, onSnapshot, orderBy, query, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA0w06QkGBbpSuW9MKZsGonJihoBbvA7Xw",
-      authDomain: "chariots-of-the-gods.firebaseapp.com",
-      projectId: "chariots-of-the-gods",
-      storageBucket: "chariots-of-the-gods.firebasestorage.app",
-      messagingSenderId: "323654427486",
-      appId: "1:323654427486:web:2ef567d2a666cd6948e5cf"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const NEWLINE = "\n";
-
-    const bootLines = [
-      "> POWERING MU/TH/UR 6000...",
-      "> BOOT SEQUENCE INITIATED...",
-      "> LINKING COMMERCIAL TRANSPORT MAINFRAME...",
-      "> ROUTING WEYLAND-YUTANI NETWORK ACCESS...",
-      "> VERIFYING SHIPBOARD USER PRIVILEGES...",
-      "> AUDIO CHANNEL READY...",
-      "> FILE DIRECTORY INDEXED...",
-      "> HR_ASSIGNMENT_NOTICE LOCATED...",
-      "> ACCESS GRANTED.",
-      "> DISPLAYING FILE..."
-    ];
-
-    const memoLines = [
-      "",
-      "FILE: HR_ASSIGNMENT_NOTICE // PRIORITY: ROUTINE // ARCHIVE CLASS: INTERNAL",
-      "CROSS-REFERENCE: ATTACHED PERSONNEL VERIFIED",
-      "SPECIAL HANDLING FLAGS PRESENT",
-      "",
-      "WEYLAND-YUTANI CORPORATION",
-      "HUMAN RESOURCES DIVISION",
-      "COMMERCIAL TRANSIT AND AUXILIARY STAFFING",
-      "------------------------------------------------------------",
-      "",
-      "TO: ASSIGNED PERSONNEL",
-      "RE: ACTIVE DUTY ASSIGNMENT",
-      "STATUS: OPEN FOR ASSIGNMENT",
-      "OPEN BILLETS: 8 ROLES REQUIRE CONFIRMATION",
-      "VESSEL: USCSS CASSIAN",
-      "AUTHORITY: WEYLAND-YUTANI CONTRACT OVERSIGHT",
-      "",
-      "WELCOME ABOARD.",
-      "",
-      "THE USCSS CASSIAN CURRENTLY REQUIRES EIGHT POSITIONS TO BE FILLED",
-      "FOR ACTIVE DUTY UNDER WEYLAND-YUTANI CONTRACT AUTHORITY.",
-      "",
-      "REQUIRED CREW COMPLEMENT INCLUDES THE FOLLOWING ROLES:",
-      "1. CAPTAIN / OFFICER",
-      "2. PILOT / NAVIGATOR",
-      "3. CHIEF ENGINEER / ROUGHNECK",
-      "4. CARGO HANDLER / DECKHAND",
-      "5. COMPANY LIAISON / CORPORATE OVERSIGHT",
-      "6. MEDIC",
-      "7. SCIENCE / SURVEY SPECIALIST",
-      "8. OPERATIONS OFFICER / WARRANT OFFICER",
-      "",
-      "PERSONNEL ROLE BRIEFINGS WILL BE ISSUED UPON CONFIRMATION OF",
-      "ASSIGNMENT AND BERTH ACCEPTANCE.",
-      "",
-      "YOU HAVE BEEN ASSIGNED TO ACTIVE DUTY ABOARD THE USCSS CASSIAN,",
-      "A COMMERCIAL TOWING VESSEL OPERATING UNDER WEYLAND-YUTANI",
-      "CONTRACT AUTHORITY. YOUR BERTH, WORK DESIGNATION, AND EMERGENCY",
-      "OPERATIONAL PRIVILEGES HAVE BEEN ENTERED INTO THE VESSEL PERSONNEL",
-      "REGISTRY FOR THE DURATION OF THIS ASSIGNMENT.",
-      "",
-      "SCHEDULED ASSIGNMENT DATE: JULY 10TH OR 17TH (STILL TO BE DECIDED)",
-      "WAKE CYCLE TIME: TO BE DETERMINED",
-      "ESTIMATED OPERATIONAL WINDOW: APPROXIMATELY 4 TO 5 HOURS",
-      "OF IN-GAME SHIPBOARD TIME",
-      "",
-      "THE CASSIAN IS CURRENTLY ENGAGED IN LONG-RANGE COMMERCIAL",
-      "TRANSIT OPERATIONS AND ASSOCIATED RECOVERY SUPPORT. AS PART OF",
-      "YOUR ASSIGNMENT, YOU MAY BE CALLED UPON TO ASSIST WITH VESSEL",
-      "SUPPORT, EMERGENCY BOARDING ACTIONS, SURVEY RESPONSE, CARGO",
-      "OVERSIGHT, MEDICAL TRIAGE, OR OTHER DUTIES AS DEEMED NECESSARY",
-      "BY SHIP COMMAND AND CORPORATE DIRECTIVE.",
-      "",
-      "PLEASE BE ADVISED OF THE FOLLOWING:",
-      "",
-      "[1] REVIVAL FROM CRYOSTASIS MAY OCCUR AHEAD OF SCHEDULE IN THE",
-      "EVENT OF ROUTE DEVIATION, DISTRESS INTERCEPTION, CORPORATE",
-      "PRIORITY REASSIGNMENT, OR EMERGENT OPERATIONAL NEED.",
-      "",
-      "[2] ALL ATTACHED PERSONNEL ARE EXPECTED TO COMPLY WITH STANDING",
-      "QUARANTINE, CONTAMINATION, AND CHAIN-OF-COMMAND PROCEDURES",
-      "WHILE ABOARD SHIP.",
-      "",
-      "[3] ANY RECOVERED MATERIALS, BIOLOGICAL FINDINGS, DATA LOGS,",
-      "OR PROPRIETARY ASSETS ENCOUNTERED DURING TRANSIT OPERATIONS",
-      "REMAIN THE SOLE PROPERTY OF WEYLAND-YUTANI CORPORATION UNLESS",
-      "OTHERWISE NOTED BY SEALED DIRECTIVE.",
-      "",
-      "QUESTIONS REGARDING YOUR ASSIGNMENT SHOULD BE DIRECTED TO",
-      "SHIP COMMAND, YOUR SUPERVISING OFFICER, OR THE DESIGNATED",
-      "CORPORATE LIAISON ABOARD THE CASSIAN.",
-      "",
-      "WE RECOGNIZE THAT LONG-HAUL ASSIGNMENTS PLACE UNIQUE DEMANDS",
-      "ON PERSONNEL. WEYLAND-YUTANI REMAINS COMMITTED TO PROVIDING",
-      "MEANINGFUL OPPORTUNITIES FOR ADVANCEMENT, CONTINUED SERVICE,",
-      "AND INTERDEPARTMENTAL GROWTH ACROSS THE COMMERCIAL FRONTIER.",
-      "",
-      "THANK YOU FOR YOUR COOPERATION.",
-      "",
-      "BUILDING BETTER WORLDS",
-      "WEYLAND-YUTANI CORPORATION",
-      "HUMAN RESOURCES DIVISION",
-      "COMMERCIAL TRANSIT AND AUXILIARY STAFFING",
-      "",
-      "FOLLOW-UP MATERIALS, ROLE BRIEFINGS, AND PERSONNEL PACKETS",
-      "WILL BE SENT AFTER ASSIGNMENT CONFIRMATION.",
-      "",
-      "> END OF FILE",
-      "> FILE READY FOR REVIEW"
-    ];
-
-    const output = document.getElementById("terminal-output");
-    const initButton = document.getElementById("init-button");
-    const bootWrap = document.getElementById("boot-wrap");
-    const controls = document.getElementById("controls");
-    const restartBtn = document.getElementById("restart-btn");
-    const skipBtn = document.getElementById("skip-btn");
-    const soundBtn = document.getElementById("sound-btn");
-    const proceedWrap = document.getElementById("proceed-wrap");
-    const proceedBtn = document.getElementById("proceed-btn");
-    const authStatus = document.getElementById("auth-status");
-    const playerNameInput = document.getElementById("player-name");
-    const rolesGrid = document.getElementById("roles-grid");
-    const rolesShell = document.getElementById("roles-shell");
-    const rolesLockCopy = document.getElementById("roles-lock-copy");
-    const attendanceMessage = document.getElementById("attendance-message");
-    const claimConfirm = document.getElementById("claim-confirm");
-    const attendYesBtn = document.getElementById("attend-yes-btn");
-    const attendNoBtn = document.getElementById("attend-no-btn");
-    const debugBox = document.getElementById("debug-box");
-
-    let audioCtx = null;
-    let soundEnabled = localStorage.getItem("muthur-sound-enabled") !== "false";
-    let currentUser = null;
-    let rolesState = [];
-    let attendanceConfirmed = false;
-    let declinedAttendance = false;
-    let typingTimer = null;
-    let isRunning = false;
-    let skipRequested = false;
-
-    soundBtn.textContent = `SOUND: ${soundEnabled ? "ON" : "OFF"}`;
-
-    function showDebug(message) {
-      debugBox.textContent = message;
-      debugBox.classList.add("visible");
-    }
-
-    function ensureAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-    }
-
-    function beep(frequency = 880, duration = 0.05, volume = 0.018) {
-      if (!soundEnabled || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = "square";
-      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration + 0.02);
-    }
-
-    function classifyLine(text, isBoot) {
-      if (isBoot) return "boot-line";
-      if (text.startsWith("FILE:") || text.startsWith("CROSS-REFERENCE:") || text.startsWith("SPECIAL HANDLING")) {
-        return "system-line";
-      }
-      return "";
-    }
-
-    function addLine(text, className = "") {
-      const line = document.createElement("div");
-      line.className = `line ${className}`.trim();
-      line.textContent = text || " ";
-      output.appendChild(line);
-      output.scrollTop = output.scrollHeight;
-    }
-
-    function updateCursor() {
-      let cursor = output.querySelector(".cursor");
-      if (!cursor) {
-        cursor = document.createElement("span");
-        cursor.className = "cursor";
-      }
-      output.appendChild(cursor);
-      output.scrollTop = output.scrollHeight;
-    }
-
-    function clearOutput() {
-      output.innerHTML = "";
-      updateCursor();
-    }
-
-    function showProceed() {
-      proceedWrap.classList.add("visible");
-    }
-
-    function hideProceed() {
-      proceedWrap.classList.remove("visible");
-    }
-
-    function renderAllImmediately() {
-      clearTimeout(typingTimer);
-      output.innerHTML = "";
-      bootLines.forEach((line) => addLine(line, classifyLine(line, true)));
-      memoLines.forEach((line) => addLine(line, classifyLine(line, false)));
-      updateCursor();
-      showProceed();
-      isRunning = false;
-      skipRequested = false;
-    }
-
-    function runSequence() {
-      if (isRunning) return;
-      isRunning = true;
-      skipRequested = false;
-      hideProceed();
-      clearOutput();
-
-      const allLines = [
-        ...bootLines.map((text) => ({ text, boot: true })),
-        ...memoLines.map((text) => ({ text, boot: false }))
-      ];
-
-      let index = 0;
-
-      function step() {
-        if (skipRequested || index >= allLines.length) {
-          updateCursor();
-          isRunning = false;
-          showProceed();
-          return;
-        }
-
-        const entry = allLines[index];
-        const text = entry.text;
-
-        if (entry.boot) {
-          beep(text.startsWith(">") ? 980 : 900, 0.04, 0.012);
-        } else {
-          beep(text.startsWith(">") ? 860 : 720, 0.04, 0.01);
-        }
-
-        addLine(text, classifyLine(text, entry.boot));
-        updateCursor();
-        index += 1;
-
-        const delay = entry.boot
-          ? (index <= 3 ? 900 : 520)
-          : (text === "" ? 120 : text.startsWith(">") ? 240 : 180);
-
-        typingTimer = window.setTimeout(step, delay);
-      }
-
-      step();
-    }
-
-    function restartSequence() {
-      clearTimeout(typingTimer);
-      isRunning = false;
-      skipRequested = false;
-      runSequence();
-    }
-
-    function skipSequence() {
-      skipRequested = true;
-      renderAllImmediately();
-    }
-
-    function showClaimConfirm(message) {
-      claimConfirm.textContent = message;
-      claimConfirm.classList.add("visible");
-    }
-
-    function hideClaimConfirm() {
-      claimConfirm.textContent = "";
-      claimConfirm.classList.remove("visible");
-    }
-
-    function setAttendanceState(state) {
-      if (state === "yes") {
-        attendanceConfirmed = true;
-        declinedAttendance = false;
-        rolesShell.classList.remove("locked");
-        rolesLockCopy.textContent = "ATTENDANCE STATUS: CONFIRMED // CREW ASSIGNMENT ACCESS GRANTED";
-        attendanceMessage.classList.remove("hidden");
-        attendanceMessage.textContent = [
-          "ATTENDANCE STATUS: CONFIRMED",
-          "CREW ASSIGNMENT ACCESS GRANTED",
-          "SELECT ONE OPEN BILLET TO RESERVE YOUR BERTH."
-        ].join(NEWLINE);
-        hideClaimConfirm();
-      } else if (state === "no") {
-        attendanceConfirmed = false;
-        declinedAttendance = true;
-        rolesShell.classList.add("locked");
-        rolesLockCopy.textContent = "CREW ASSIGNMENT ACCESS RESTRICTED";
-        attendanceMessage.classList.remove("hidden");
-        attendanceMessage.textContent = [
-          "ATTENDANCE STATUS: DECLINED",
-          "CREW ASSIGNMENT ACCESS RESTRICTED",
-          "NO ACTIVE BERTH RESERVED",
-          "CONTACT WEYLAND-YUTANI PERSONNEL IF AVAILABILITY CHANGES."
-        ].join(NEWLINE);
-        hideClaimConfirm();
-      } else {
-        attendanceConfirmed = false;
-        declinedAttendance = false;
-        rolesShell.classList.add("locked");
-        rolesLockCopy.textContent = "CONFIRM AVAILABILITY TO ACCESS CREW ASSIGNMENT.";
-        attendanceMessage.classList.add("hidden");
-        attendanceMessage.textContent = "";
-        hideClaimConfirm();
-      }
-      renderRoles(rolesState);
-    }
-
-    function getCurrentUserRole() {
-      if (!currentUser) return null;
-      return rolesState.find((role) => role.claimedByUid && role.claimedByUid === currentUser.uid) || null;
-    }
-
-    function renderRoles(roles) {
-      rolesGrid.innerHTML = "";
-      const myRole = getCurrentUserRole();
-
-      roles.forEach((role) => {
-        const claimed = Boolean(role.claimedByUid);
-        const mine = currentUser && role.claimedByUid === currentUser.uid;
-
-        const card = document.createElement("div");
-        card.className = `role-card${claimed ? " taken" : ""}${mine ? " mine" : ""}`;
-
-        const title = document.createElement("h3");
-        title.textContent = role.title;
-
-        const desc = document.createElement("p");
-        desc.textContent = role.description || "";
-
-        const meta = document.createElement("div");
-        meta.className = "role-meta";
-        if (mine) {
-          meta.textContent = `ASSIGNED TO YOU AS ${role.claimedBy}`;
-        } else if (claimed) {
-          meta.textContent = `ASSIGNED: ${role.claimedBy}`;
-        } else if (myRole) {
-          meta.textContent = "STATUS: OPEN // BERTH LOCKED AFTER YOUR ASSIGNMENT";
-        } else if (attendanceConfirmed) {
-          meta.textContent = "STATUS: OPEN";
-        } else {
-          meta.textContent = "STATUS: STANDBY";
-        }
-
-        const button = document.createElement("button");
-        button.type = "button";
-
-        if (mine) {
-          button.textContent = "ASSIGNED TO YOU";
-          button.disabled = true;
-        } else if (claimed) {
-          button.textContent = "ASSIGNED";
-          button.disabled = true;
-        } else if (myRole) {
-          button.textContent = "BERTH ALREADY RESERVED";
-          button.disabled = true;
-        } else if (!attendanceConfirmed || declinedAttendance) {
-          button.textContent = "CONFIRM ATTENDANCE";
-          button.disabled = true;
-        } else {
-          button.textContent = "CLAIM ROLE";
-          button.addEventListener("click", () => claimRole(role.id));
-        }
-
-        card.append(title, desc, meta, button);
-        rolesGrid.appendChild(card);
-      });
-    }
-
-    async function claimRole(roleId) {
-      if (!currentUser) {
-        alert("Still connecting. Try again in a moment.");
-        return;
-      }
-      if (!attendanceConfirmed || declinedAttendance) {
-        alert("Confirm attendance before selecting a role.");
-        return;
-      }
-
-      const playerName = playerNameInput.value.trim();
-      if (!playerName) {
-        alert("Enter your name first.");
-        return;
-      }
-
-      if (getCurrentUserRole()) {
-        alert("You already have a reserved berth.");
-        return;
-      }
-
-      const ref = doc(db, "games", "cassian", "roles", roleId);
-
-      try {
-        await runTransaction(db, async (transaction) => {
-          const snap = await transaction.get(ref);
-          if (!snap.exists()) throw new Error("Role does not exist.");
-          const data = snap.data();
-          if (data.claimedByUid) throw new Error("That role has already been claimed.");
-          transaction.update(ref, {
-            claimedBy: playerName,
-            claimedByUid: currentUser.uid,
-            claimedAt: serverTimestamp()
-          });
-        });
-
-        attendanceMessage.classList.remove("hidden");
-        attendanceMessage.textContent = [
-          "ATTENDANCE STATUS: CONFIRMED",
-          "BERTH RESERVED SUCCESSFULLY"
-        ].join(NEWLINE);
-        showClaimConfirm([
-          "ASSIGNMENT CONFIRMED",
-          "PAPERWORK WILL BE SENT SHORTLY.",
-          "WEYLAND-YUTANI THANKS YOU FOR CHOOSING TO SERVE ABOARD THE USCSS CASSIAN.",
-          "FOLLOW-UP MATERIALS AND ROLE BRIEFINGS WILL BE ISSUED AFTER CONFIRMATION."
-        ].join(NEWLINE));
-      } catch (error) {
-        alert(error.message || "Could not claim role.");
-        console.error(error);
-      }
-    }
-
-    signInAnonymously(auth).catch((error) => {
-      authStatus.textContent = "AUTH ERROR";
-      showDebug(["AUTH ERROR", error.message].join(NEWLINE));
-      console.error(error);
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      authStatus.textContent = user ? `AUTH: LINKED // ${user.uid.slice(0, 8)}` : "AUTH: OFFLINE";
-      renderRoles(rolesState);
-    });
-
-    onSnapshot(
-      query(collection(db, "games", "cassian", "roles"), orderBy("order")),
-      (snapshot) => {
-        rolesState = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
-        const myRole = getCurrentUserRole();
-        if (myRole) {
-          attendanceConfirmed = true;
-          declinedAttendance = false;
-          rolesShell.classList.remove("locked");
-          rolesLockCopy.textContent = "ATTENDANCE STATUS: CONFIRMED // CREW ASSIGNMENT ACCESS GRANTED";
-        }
-        renderRoles(rolesState);
-      },
-      (error) => {
-        console.error(error);
-        authStatus.textContent = "AUTH: DATA LINK ERROR";
-        showDebug(["DATA LINK ERROR", error.message].join(NEWLINE));
-      }
-    );
-
-    initButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      ensureAudio();
-      beep(640, 0.06, 0.015);
-      bootWrap.style.display = "none";
-      controls.style.display = "flex";
-      runSequence();
-    });
-
-    restartBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      ensureAudio();
-      restartSequence();
-    });
-
-    skipBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      ensureAudio();
-      skipSequence();
-    });
-
-    soundBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      soundEnabled = !soundEnabled;
-      localStorage.setItem("muthur-sound-enabled", String(soundEnabled));
-      soundBtn.textContent = `SOUND: ${soundEnabled ? "ON" : "OFF"}`;
-      ensureAudio();
-      if (soundEnabled) beep(950, 0.05, 0.012);
-    });
-
-    attendYesBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (!playerNameInput.value.trim()) {
-        alert("Enter your name before confirming attendance.");
-        return;
-      }
-      setAttendanceState("yes");
-    });
-
-    attendNoBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (!playerNameInput.value.trim()) {
-        alert("Enter your name before continuing.");
-        return;
-      }
-      setAttendanceState("no");
-    });
-
-    proceedBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      document.getElementById("crew-assignment").scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-
-    function runSelfTests() {
-      console.assert(classifyLine("FILE: TEST", false) === "system-line", "FILE line should be system-line");
-      console.assert(classifyLine("> BOOT", true) === "boot-line", "Boot line should be boot-line");
-      console.assert(["A", "B"].join(NEWLINE) === `A${NEWLINE}B`, "join newline should be escaped correctly");
-      console.assert(typeof bootLines[0] === "string", "Boot lines should be strings");
-      console.assert(typeof memoLines[0] === "string", "Memo lines should be strings");
-      console.assert(NEWLINE.length === 1, "NEWLINE should be a single character");
-    }
-
-    runSelfTests();
-    clearOutput();
-    setAttendanceState("idle");
-    renderRoles([]);
-  </script>
+    <div class="footer">WEYLAND-YUTANI INTERNAL REPOSITORY ACCESS // BUILDING BETTER WORLDS</div>
+  </section>
 </body>
 </html>
