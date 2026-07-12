@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weyland-Yutani // USCSS Cassian Departure Notice</title>
+  <style>
+    :root {
+      --amber: #ffb347;
+      --amber-bright: #ffd891;
+      --amber-text: #ffe7bf;
+      --amber-border: rgba(255, 179, 71, 0.3);
+      --panel: rgba(255, 179, 71, 0.05);
+      --bg: #000;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(50, 24, 0, 0.68) 0%, rgba(8, 4, 0, 0.94) 50%, #000 80%),
+        #000;
+      color: var(--amber);
+      font-family: "Courier New", Courier, monospace;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 179, 71, 0.035) 0,
+        rgba(255, 179, 71, 0.035) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      opacity: 0.2;
+    }
+
+    .screen {
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .terminal {
+      width: min(900px, 100%);
+      border: 2px solid var(--amber);
+      border-radius: 22px / 16px;
+      background: linear-gradient(180deg, rgba(10, 5, 0, 0.97), rgba(2, 1, 0, 0.99));
+      box-shadow: 0 0 18px rgba(255, 120, 20, 0.1), inset 0 0 70px rgba(0, 0, 0, 0.42);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .terminal::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 18px / 14px;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255, 239, 201, 0.1), transparent 25%),
+        radial-gradient(circle at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.16) 82%, rgba(0, 0, 0, 0.3) 100%);
+      z-index: 2;
+    }
+
+    .header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--amber-border);
+      position: relative;
+      z-index: 3;
+    }
+
+    .header-title {
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: 4px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+
+    .status-bar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--amber-border);
+      position: relative;
+      z-index: 3;
+    }
+
+    .status-pill {
+      padding: 8px 10px;
+      border: 1px solid var(--amber-border);
+      background: rgba(255, 179, 71, 0.03);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .content {
+      padding: 22px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .notice {
+      border: 1px solid var(--amber-border);
+      background: rgba(0, 0, 0, 0.34);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.46);
+      color: var(--amber-text);
+      padding: 20px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      text-shadow: 0 0 4px rgba(255, 179, 71, 0.16);
+    }
+
+    .departure-board {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .board-cell {
+      border: 1px solid var(--amber-border);
+      background: var(--panel);
+      padding: 14px;
+    }
+
+    .label {
+      color: var(--amber-bright);
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 7px;
+    }
+
+    .value {
+      color: var(--amber-text);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .checklist {
+      margin-top: 16px;
+      border: 1px solid var(--amber-border);
+      background: var(--panel);
+      padding: 16px;
+      color: var(--amber-text);
+      line-height: 1.8;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .button {
+      display: inline-block;
+      color: var(--amber-text);
+      border: 1px solid var(--amber);
+      background: #100900;
+      padding: 10px 14px;
+      text-decoration: none;
+      letter-spacing: 0.6px;
+    }
+
+    .button:hover {
+      background: rgba(255, 179, 71, 0.08);
+    }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      opacity: 0.62;
+    }
+
+    @media (max-width: 640px) {
+      .screen { padding: 10px; }
+      .header, .status-bar, .content {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .status-bar,
+      .departure-board {
+        grid-template-columns: 1fr;
+      }
+      .header-title {
+        font-size: 22px;
+        letter-spacing: 2px;
+      }
+      .value { font-size: 16px; }
+      .button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <section class="terminal">
+      <header class="header">
+        <div class="header-title">WEYLAND-YUTANI</div>
+        <div class="header-subtitle">COMMERCIAL TRANSPORT OPERATIONS // CREW DEPARTURE NOTICE</div>
+      </header>
+
+      <div class="status-bar">
+        <div class="status-pill">VESSEL: USCSS CASSIAN</div>
+        <div class="status-pill">ASSIGNMENT STATUS: CONFIRMED</div>
+        <div class="status-pill">NOTICE TYPE: ADVANCE CREW CALL</div>
+        <div class="status-pill">DEPARTURE WINDOW: T-MINUS 14 DAYS</div>
+      </div>
+
+      <main class="content">
+        <div class="notice">FILE: CASSIAN_DEPARTURE_NOTICE
+PRIORITY: ROUTINE // DISTRIBUTION: ALL ATTACHED PERSONNEL
+
+TO: USCSS CASSIAN CREW
+RE: ADVANCE REPORTING NOTICE
+
+Your active-duty assignment aboard the USCSS Cassian is confirmed.
+This transmission serves as an advance crew call before scheduled departure.
+
+All personnel are expected to report before the departure window for final
+communications checks, crew assembly, and pre-flight briefing.
+
+This is an advance notice. Additional operational materials will be issued
+through official crew communications as departure approaches.</div>
+
+        <section class="departure-board" aria-label="Departure schedule">
+          <div class="board-cell">
+            <div class="label">DEPARTURE DATE</div>
+            <div class="value">FRIDAY<br>JULY 24, 2026</div>
+          </div>
+          <div class="board-cell">
+            <div class="label">DEPARTURE TIME</div>
+            <div class="value">6:00 PM MST</div>
+          </div>
+          <div class="board-cell">
+            <div class="label">RECOMMENDED CALL TIME</div>
+            <div class="value">5:45 PM MST</div>
+          </div>
+          <div class="board-cell">
+            <div class="label">ESTIMATED OPERATIONAL WINDOW</div>
+            <div class="value">APPROX. 4 HOURS</div>
+          </div>
+        </section>
+
+        <section class="checklist">
+          <div class="label">PRE-DEPARTURE REQUIREMENTS</div>
+          [ ] Review your assigned personnel dossier
+          [ ] Confirm Discord and voice access
+          [ ] Verify microphone and audio settings
+          [ ] Report by call time for final briefing
+          [ ] Await additional role materials and directives
+        </section>
+
+        <div class="actions">
+          <a class="button" href="https://discord.gg/dFQw6zdT" target="_blank" rel="noopener noreferrer">OPEN CREW COMMUNICATIONS</a>
+          <a class="button" href="index.html">RETURN TO REPOSITORY HUB</a>
+        </div>
+
+        <div class="footer">BUILDING BETTER WORLDS // WEYLAND-YUTANI CORPORATION</div>
+      </main>
+    </section>
+  </div>
+</body>
+</html>
