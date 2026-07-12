@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weyland-Yutani // USCSS Cassian Crew Invite</title>
+  <title>Weyland-Yutani // USCSS Cassian Departure Notice</title>
   <style>
     :root {
       --amber: #ffb347;
@@ -82,9 +82,7 @@
       background: rgba(255, 179, 71, 0.03);
       white-space: nowrap;
     }
-    .content {
-      padding: 22px;
-    }
+    .content { padding: 22px; }
     .display, .section {
       border: 1px solid var(--amber-border);
       background: rgba(0, 0, 0, 0.34);
@@ -106,7 +104,7 @@
       color: var(--amber-bright);
       margin-bottom: 10px;
     }
-    .access-link {
+    .access-link, .hub-link {
       display: inline-block;
       margin-top: 10px;
       color: var(--amber-text);
@@ -115,20 +113,21 @@
       background: rgba(255, 179, 71, 0.04);
       padding: 10px 14px;
     }
+    .hub-link { margin-top: 18px; }
     .footer-note {
       margin-top: 18px;
       font-size: 11px;
       letter-spacing: 1px;
       opacity: 0.62;
     }
-    .hub-link {
-      display: inline-block;
-      margin-top: 18px;
-      color: var(--amber-text);
-      text-decoration: none;
-      border: 1px solid var(--amber-border);
-      background: rgba(255, 179, 71, 0.04);
-      padding: 10px 14px;
+    @media (max-width: 640px) {
+      .screen { padding: 10px; }
+      .content, .header, .status-bar {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .status-bar { flex-direction: column; }
+      .status-pill { white-space: normal; }
     }
   </style>
 </head>
@@ -137,33 +136,41 @@
     <section class="terminal">
       <div class="header">
         <div class="header-title">WEYLAND-YUTANI</div>
-        <div class="header-subtitle">PERSONNEL NOTICE // USCSS CASSIAN // ACTIVE DUTY ASSIGNMENT</div>
+        <div class="header-subtitle">COMMERCIAL TRANSPORT DIVISION // CREW DEPARTURE NOTICE</div>
       </div>
+
       <div class="status-bar">
         <div class="status-pill">VESSEL: USCSS CASSIAN</div>
-        <div class="status-pill">STATUS: OPEN INVITATION</div>
-        <div class="status-pill">ASSIGNMENT DATE: JULY 24</div>
-        <div class="status-pill">WAKE CYCLE: 5:00 PM EST</div>
+        <div class="status-pill">STATUS: DEPARTURE CONFIRMED</div>
+        <div class="status-pill">DATE: JULY 24, 2026</div>
+        <div class="status-pill">DEPARTURE: 6:00 PM MST</div>
       </div>
+
       <div class="content">
-        <div class="display">FILE: PERSONNEL INVITATION // PRIORITY: ROUTINE // ARCHIVE CLASS: INTERNAL
+        <div class="display">FILE: CREW RECALL NOTICE // PRIORITY: ROUTINE // ARCHIVE CLASS: INTERNAL
 
-TO: ATTACHED PERSONNEL
-RE: ACTIVE DUTY INVITATION
-STATUS: OPEN
+TO: ALL ATTACHED PERSONNEL
+VESSEL: USCSS CASSIAN
+RE: REPORTING AND DEPARTURE SCHEDULE
+STATUS: CONFIRMED
 
-You are hereby directed to report for active duty aboard the USCSS CASSIAN on:
+Your assigned departure aboard the USCSS CASSIAN is scheduled for:
 
-THURSDAY, JULY 24TH
-5:00 PM EST
+FRIDAY, JULY 24, 2026
 
-All attached personnel should arrive a few minutes early for final checks,
-crew readiness confirmation, and assignment review.
+CREW CALL TIME .............. 5:45 PM MST
+DEPARTURE TIME .............. 6:00 PM MST
+ESTIMATED OPERATIONAL WINDOW 4 HOURS
 
-Failure to report on time may result in reassignment of berth privileges.
+All personnel are expected to report during the designated call window
+for final audio checks, crew assembly, and pre-departure briefing.
 
-FOLLOW-UP MATERIALS, ROLE BRIEFINGS, AND PERSONNEL PACKETS
-WILL BE ISSUED AFTER ASSIGNMENT CONFIRMATION.
+The vessel will depart on schedule. Late arrivals may be subject to
+berth reassignment or delayed cryostasis processing.
+
+Review all available personnel materials before reporting. Additional
+operational access and final instructions will be issued through the
+official crew communications channel.
 
 BUILDING BETTER WORLDS
 WEYLAND-YUTANI CORPORATION</div>
@@ -171,21 +178,17 @@ WEYLAND-YUTANI CORPORATION</div>
         <div class="section">
           <div class="section-title">CREW COMMUNICATIONS</div>
           Report to the official crew server for announcements, check-in,
-          operational notices, and final materials.
+          final materials, and voice staging.
 
           <a class="access-link" href="https://discord.gg/dFQw6zdT" target="_blank" rel="noopener noreferrer">OPEN DISCORD INVITE</a>
         </div>
 
         <div class="section">
-          <div class="section-title">ADDITIONAL MATERIALS</div>
-          Foundry access, role briefings, and operational links will be issued
-          through crew communications as needed.
-        </div>
-
-        <div class="section">
-          <div class="section-title">REPORTING INSTRUCTIONS</div>
-          Arrive a few minutes early. Confirm audio, review all posted notices,
-          and await further role briefings and operational materials.
+          <div class="section-title">PRE-DEPARTURE REQUIREMENTS</div>
+          [ ] Review your assigned character dossier
+          [ ] Confirm Discord and microphone access
+          [ ] Report by 5:45 PM MST
+          [ ] Await final briefing before departure
         </div>
 
         <a class="hub-link" href="index.html">RETURN TO REPOSITORY HUB</a>
